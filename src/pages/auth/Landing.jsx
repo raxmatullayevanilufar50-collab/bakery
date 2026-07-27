@@ -22,17 +22,9 @@ export default function Landing() {
 
         <div className="card p-6 flex flex-col gap-3">
           <p className="text-lg font-extrabold text-brown-dark mb-1">{t('landing.welcome')}</p>
-          <Link to="/kompaniya-ochish" className="btn-primary flex items-center justify-center">
-            {t('landing.createCompany')}
-          </Link>
-          <Link to="/kirish" className="btn-secondary flex items-center justify-center">
+          <Link to="/kirish" className="btn-primary flex items-center justify-center">
             {t('landing.ownerLogin')}
           </Link>
-          <div className="flex items-center gap-3 text-xs text-ink-muted font-bold my-1">
-            <span className="flex-1 h-px bg-brown/15" />
-            {t('common.or')}
-            <span className="flex-1 h-px bg-brown/15" />
-          </div>
           <Link to="/xodim-kirish" className="btn-secondary flex items-center justify-center">
             {t('landing.employeeLogin')}
           </Link>

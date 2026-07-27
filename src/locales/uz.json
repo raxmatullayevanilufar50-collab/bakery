@@ -62,6 +62,13 @@
     "haveAccount": "Hisobingiz bormi?",
     "login": "Kirish"
   },
+  "signupGate": {
+    "title": "Kirish kodi kerak",
+    "subtitle": "Bu sahifa hozircha faqat kirish kodi bilan ochiladi",
+    "placeholder": "Kirish kodi",
+    "submit": "Davom etish",
+    "wrongCode": "Kirish kodi noto'g'ri"
+  },
   "ownerLogin": {
     "title": "Kirish",
     "subtitle": "Egasi yoki boshqaruvchi hisobingiz bilan kiring",
