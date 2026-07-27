@@ -1,0 +1,73 @@
+@import "tailwindcss";
+
+/* Nonvoyxona vizual tizimi — design-reference.html'dagi rang/shrift/soya
+   o'zgaruvchilariga mos. Bu loyihaning yagona vizual standarti. */
+@theme {
+  --color-brown: #8b4513;
+  --color-brown-light: #c67c52;
+  --color-brown-dark: #5c2d0a;
+  --color-cream: #fff8f0;
+  --color-cream-dark: #f5e6d3;
+  --color-orange: #e8752a;
+  --color-orange-light: #f4a261;
+  --color-orange-pale: #fde8d5;
+  --color-gold: #d4a017;
+  --color-ink: #2c1810;
+  --color-ink-muted: #7a5c4a;
+  --color-good: #2db37a;
+  --color-good-bg: #e8f8ee;
+  --color-bad: #c0392b;
+  --color-bad-bg: #ffebeb;
+
+  --font-sans: "Nunito", system-ui, sans-serif;
+  --font-display: "Playfair Display", serif;
+
+  --radius-card: 20px;
+
+  --shadow-card: 0 4px 24px rgba(139, 69, 19, 0.12);
+  --shadow-card-lg: 0 12px 48px rgba(139, 69, 19, 0.18);
+}
+
+:root {
+  color-scheme: light;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  color: var(--color-ink);
+  background: var(--color-cream);
+  -webkit-font-smoothing: antialiased;
+}
+
+@layer components {
+  .input {
+    @apply h-12 px-4 rounded-xl border-2 border-brown/15 bg-cream text-ink
+      placeholder:text-ink-muted/60 outline-none focus:border-orange focus:bg-white
+      focus:ring-4 focus:ring-orange/10 text-base font-semibold transition;
+  }
+
+  .btn-primary {
+    @apply h-14 rounded-xl text-white font-extrabold text-base
+      bg-gradient-to-br from-orange to-brown-light
+      shadow-[0_4px_16px_rgba(232,117,42,0.35)]
+      active:scale-95 transition disabled:opacity-50 disabled:active:scale-100;
+  }
+
+  .btn-secondary {
+    @apply h-14 rounded-xl border-2 border-brown/15 text-ink-muted font-bold text-base
+      active:scale-95 transition disabled:opacity-50 disabled:active:scale-100
+      hover:border-orange hover:text-orange;
+  }
+
+  .card {
+    @apply bg-white rounded-[var(--radius-card)] border border-brown/10
+      shadow-[var(--shadow-card)];
+  }
+}

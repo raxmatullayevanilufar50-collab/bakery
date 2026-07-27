@@ -1,0 +1,17 @@
+# send-sms-hook Supabase Auth tomonidan server-serverga (webhook) chaqiriladi
+# — foydalanuvchi JWT'i bilan emas, Standard Webhooks imzosi bilan
+# autentifikatsiya qilinadi (funksiya kodining o'zida tekshiriladi).
+# Shuning uchun Edge Functions gateway'ining standart JWT talabini
+# shu funksiya uchun o'chiramiz — aks holda so'rov funksiyaga
+# yetib bormasdanoq "Hook requires authorization token" xatosi bilan
+# rad etiladi.
+[functions.send-sms-hook]
+verify_jwt = false
+
+# pin-auth — xodim hali sessiyaga ega bo'lmasdan turib chaqiradi (bu
+# uning o'zi kirish nuqtasi), shuning uchun JWT talab qilinmaydi.
+[functions.pin-auth]
+verify_jwt = false
+
+# create-employee esa ODDIY foydalanuvchi (Owner/Manager) JWT'i bilan
+# chaqiriladi — standart verify_jwt=true qoldiriladi (config yozilmaydi).
