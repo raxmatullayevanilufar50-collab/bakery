@@ -18,6 +18,7 @@
   --color-good-bg: #e8f8ee;
   --color-bad: #c0392b;
   --color-bad-bg: #ffebeb;
+  --color-surface: #ffffff;
 
   --font-sans: "Nunito", system-ui, sans-serif;
   --font-display: "Playfair Display", serif;
@@ -29,7 +30,40 @@
 }
 
 :root {
-  color-scheme: light;
+  color-scheme: light dark;
+  --gradient-auth-bg: linear-gradient(160deg, #fff8f0 0%, #fde8d5 50%, #f5d5b5 100%);
+}
+
+/* Dark rejim — brend rangini saqlab qolgan holda (kulrang emas, iliq
+   jigarrang/qora), asosiy tokenlarni qayta belgilaymiz. Deyarli barcha
+   komponentlar shu tokenlar orqali rang olgani uchun avtomatik moslashadi.
+   Yagona istisno: sidebar har doim qorong'i qoladi (DashboardShell'da
+   qattiq rang bilan yozilgan), shuning uchun --color-brown-dark'ni bu
+   yerda matn uchun ochiq rangga aylantirish sidebar'ga ta'sir qilmaydi. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-brown: #c9895a;
+    --color-brown-light: #d99f76;
+    --color-brown-dark: #f3d9b6;
+    --color-cream: #1c130c;
+    --color-cream-dark: #241a12;
+    --color-orange: #f2905a;
+    --color-orange-light: #f6b47e;
+    --color-orange-pale: #3a2416;
+    --color-gold: #e0b13a;
+    --color-ink: #f5e9dd;
+    --color-ink-muted: #c2a488;
+    --color-good: #4fcf9a;
+    --color-good-bg: #16332a;
+    --color-bad: #e8695a;
+    --color-bad-bg: #3a1c18;
+    --color-surface: #2a1d13;
+
+    --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.35);
+    --shadow-card-lg: 0 12px 48px rgba(0, 0, 0, 0.45);
+
+    --gradient-auth-bg: linear-gradient(160deg, #1c130c 0%, #241a12 50%, #2e2013 100%);
+  }
 }
 
 html,
@@ -49,7 +83,7 @@ body {
 @layer components {
   .input {
     @apply h-12 px-4 rounded-xl border-2 border-brown/15 bg-cream text-ink
-      placeholder:text-ink-muted/60 outline-none focus:border-orange focus:bg-white
+      placeholder:text-ink-muted/60 outline-none focus:border-orange focus:bg-surface
       focus:ring-4 focus:ring-orange/10 text-base font-semibold transition;
   }
 
@@ -67,7 +101,7 @@ body {
   }
 
   .card {
-    @apply bg-white rounded-[var(--radius-card)] border border-brown/10
+    @apply bg-surface rounded-[var(--radius-card)] border border-brown/10
       shadow-[var(--shadow-card)];
   }
 }

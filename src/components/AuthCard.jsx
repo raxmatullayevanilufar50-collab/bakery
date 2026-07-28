@@ -7,7 +7,7 @@ export default function AuthCard({ title, subtitle, children }) {
   return (
     <div
       className="min-h-screen flex items-center justify-center px-4 py-8 relative"
-      style={{ background: 'linear-gradient(160deg, #FFF8F0 0%, #FDE8D5 50%, #F5D5B5 100%)' }}
+      style={{ background: 'var(--gradient-auth-bg)' }}
     >
       <div className="absolute top-4 right-4">
         <LanguageSwitcher />

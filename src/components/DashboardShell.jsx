@@ -36,7 +36,7 @@ export default function DashboardShell({ navGroups, active, onNavigate, title, c
       )}
 
       <aside
-        className={`fixed left-0 top-0 h-full w-[260px] bg-gradient-to-b from-brown-dark to-[#3D1F0A] flex flex-col z-[100]
+        className={`fixed left-0 top-0 h-full w-[260px] bg-gradient-to-b from-[#5c2d0a] to-[#3D1F0A] flex flex-col z-[100]
           transition-transform duration-300 md:translate-x-0
           ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}
       >
@@ -104,7 +104,7 @@ export default function DashboardShell({ navGroups, active, onNavigate, title, c
       </aside>
 
       <div className="flex-1 md:ml-[260px] min-h-screen flex flex-col">
-        <div className="md:hidden flex items-center justify-between bg-white px-4 h-14 border-b border-brown/10 sticky top-0 z-50 gap-2">
+        <div className="md:hidden flex items-center justify-between bg-surface px-4 h-14 border-b border-brown/10 sticky top-0 z-50 gap-2">
           <button type="button" onClick={() => setSidebarOpen(true)} className="text-xl text-brown-dark shrink-0">
             ☰
           </button>
@@ -114,7 +114,7 @@ export default function DashboardShell({ navGroups, active, onNavigate, title, c
           <LanguageSwitcher />
         </div>
 
-        <div className="hidden md:flex items-center justify-between bg-white px-7 h-16 border-b border-brown/10 sticky top-0 z-50">
+        <div className="hidden md:flex items-center justify-between bg-surface px-7 h-16 border-b border-brown/10 sticky top-0 z-50">
           <p className="text-lg font-extrabold text-brown-dark">{title}</p>
           <div className="flex items-center gap-4">
             <p className="text-sm text-ink-muted font-semibold capitalize">{today}</p>

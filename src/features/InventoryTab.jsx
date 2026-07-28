@@ -129,7 +129,7 @@ export default function InventoryTab() {
           return (
             <div
               key={item.id}
-              className={`bg-white rounded-[var(--radius-card)] shadow-[var(--shadow-card)] border p-4 flex items-center justify-between gap-3 ${
+              className={`bg-surface rounded-[var(--radius-card)] shadow-[var(--shadow-card)] border p-4 flex items-center justify-between gap-3 ${
                 low ? 'border-bad/40' : 'border-brown/10'
               }`}
             >
