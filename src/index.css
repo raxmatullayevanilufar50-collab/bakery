@@ -76,10 +76,34 @@
     animation: bakery-shimmer 1.5s infinite linear;
   }
 
+  /* Chek chop etish — 80mm termal rulon (bosiladigan kenglik ~72mm).
+     A4 printerda ham shu blok sahifaning yuqori chap burchagida, tor
+     ustun ko'rinishida chiqadi. Faqat qora-oq: termal boshcha rangni
+     bosmaydi, shuning uchun fon/soyalar butunlay olib tashlanadi. */
+  @page {
+    size: 80mm auto;
+    margin: 0;
+  }
+
   @media print {
     body * { visibility: hidden; }
-    .receipt-print, .receipt-print * { visibility: visible; }
-    .receipt-print { position: absolute; left: 0; top: 0; width: 300px; }
+    .receipt-print, .receipt-print * {
+      visibility: visible;
+      color: #000 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .receipt-print {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 72mm;
+      max-width: 72mm;
+      padding: 2mm 3mm !important;
+      background: #fff !important;
+    }
   }
 }
 

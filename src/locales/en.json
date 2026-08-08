@@ -361,7 +361,7 @@
   "pos": {"all":"All","search":"Search","cart":"Cart","sell":"Sell","clear":"Clear","preOrder":"Pre-order","available":"Available","soldOut":"Sold out","weightInput":"Weight","enterWeight":"Enter weight","cartEmpty":"Cart is empty","total":"Total","saleSuccess":"Sale recorded"},
   "categories": {"non":"Bread","pishiriq":"Pastries","tort":"Cakes","shirinlik":"Sweets","ichimlik":"Drinks","boshqa":"Other"},
   "preOrder": {"title":"Pre-order","customerName":"Customer name","phone":"Phone","pickupDate":"Pickup date","pickupTime":"Pickup time","notes":"Notes","submit":"Create order","created":"Order created","status":{"label":"Status","kutilmoqda":"Waiting","tayyor":"Ready","berildi":"Given","bekor":"Cancelled"}},
-  "receipt": {"print":"Print","share":"Share"},
+  "receipt": {"print":"Print","share":"Share","close":"Close","number":"Receipt","date":"Date","cashier":"Cashier","itemCount":"Items","grandTotal":"TOTAL","thanks":"Thank you!","comeAgain":"Please come again!"},
   "products": {"uploadImage":"Upload image","imageError":"JPG, PNG or WebP up to 2 MB"},
   "errors": {
     "notAuthenticated": "Not authenticated",

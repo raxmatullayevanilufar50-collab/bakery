@@ -18,7 +18,7 @@ function startOfDay() {
 
 export default function CashierDashboard() {
   const { t, i18n } = useTranslation()
-  const { profile } = useAuth()
+  const { profile, company } = useAuth()
   const toast = useToast()
   const [products, setProducts] = useState([])
   const [sales, setSales] = useState([])
@@ -81,7 +81,15 @@ export default function CashierDashboard() {
     if (insertError) setError(translateError(t, insertError))
     else {
       await Promise.all(cart.map((item) => supabase.from('display_inventory').update({ quantity_available: Math.max(0, (inventory[item.product.id] || 0) - item.quantity), updated_at: new Date().toISOString() }).eq('company_id', profile.company_id).eq('product_id', item.product.id)))
-      setReceipt({ items: cart, total: cart.reduce((sum, item) => sum + item.product.price * item.quantity, 0), number: inserted?.[0]?.id })
+      setReceipt({
+        items: cart,
+        total: cart.reduce((sum, item) => sum + item.product.price * item.quantity, 0),
+        number: inserted?.[0]?.id,
+        createdAt: new Date().toISOString(),
+        cashierName: profile.full_name,
+        companyName: company?.name,
+        companyAddress: company?.address,
+      })
       setCart([])
       toast.success(t('pos.saleSuccess'))
     }

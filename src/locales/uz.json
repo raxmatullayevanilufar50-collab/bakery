@@ -361,7 +361,7 @@
   "pos": {"all":"Barchasi","search":"Qidirish","cart":"Savat","sell":"Sotish","clear":"Tozalash","preOrder":"Oldindan buyurtma","available":"Mavjud","soldOut":"Tugadi","weightInput":"Og'irlik","enterWeight":"Og'irlikni kiriting","cartEmpty":"Savat bo'sh","total":"Jami","saleSuccess":"Savdo qayd etildi"},
   "categories": {"non":"Non","pishiriq":"Pishiriq","tort":"Tort","shirinlik":"Shirinlik","ichimlik":"Ichimlik","boshqa":"Boshqa"},
   "preOrder": {"title":"Oldindan buyurtma","customerName":"Mijoz ismi","phone":"Telefon","pickupDate":"Olib ketish sanasi","pickupTime":"Olib ketish vaqti","notes":"Izohlar","submit":"Buyurtma yaratish","created":"Buyurtma yaratildi","status":{"label":"Holat","kutilmoqda":"Kutilmoqda","tayyor":"Tayyor","berildi":"Berildi","bekor":"Bekor"}},
-  "receipt": {"print":"Chop etish","share":"Ulashish"},
+  "receipt": {"print":"Chop etish","share":"Ulashish","close":"Yopish","number":"Chek","date":"Sana","cashier":"Kassir","itemCount":"Mahsulotlar soni","grandTotal":"JAMI","thanks":"Rahmat!","comeAgain":"Yana tashrif buyuring!"},
   "products": {"uploadImage":"Rasm yuklash","imageError":"JPG, PNG yoki WebP, 2 MB gacha bo'lishi kerak"},
   "errors": {
     "notAuthenticated": "Avtorizatsiyadan o'tilmagan",

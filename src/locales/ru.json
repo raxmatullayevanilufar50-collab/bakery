@@ -361,7 +361,7 @@
   "pos": {"all":"Все","search":"Поиск","cart":"Корзина","sell":"Продать","clear":"Очистить","preOrder":"Предзаказ","available":"Доступно","soldOut":"Нет в наличии","weightInput":"Вес","enterWeight":"Введите вес","cartEmpty":"Корзина пуста","total":"Итого","saleSuccess":"Продажа записана"},
   "categories": {"non":"Хлеб","pishiriq":"Выпечка","tort":"Торты","shirinlik":"Сладости","ichimlik":"Напитки","boshqa":"Другое"},
   "preOrder": {"title":"Предзаказ","customerName":"Имя клиента","phone":"Телефон","pickupDate":"Дата получения","pickupTime":"Время получения","notes":"Примечания","submit":"Создать заказ","created":"Заказ создан","status":{"label":"Статус","kutilmoqda":"Ожидает","tayyor":"Готов","berildi":"Выдан","bekor":"Отменён"}},
-  "receipt": {"print":"Печать","share":"Поделиться"},
+  "receipt": {"print":"Печать","share":"Поделиться","close":"Закрыть","number":"Чек","date":"Дата","cashier":"Кассир","itemCount":"Количество товаров","grandTotal":"ИТОГО","thanks":"Спасибо!","comeAgain":"Приходите ещё!"},
   "products": {"uploadImage":"Загрузить фото","imageError":"JPG, PNG или WebP до 2 МБ"},
   "errors": {
     "notAuthenticated": "Не авторизовано",

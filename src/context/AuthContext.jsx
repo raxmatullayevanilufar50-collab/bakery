@@ -8,6 +8,8 @@ const AuthContext = createContext(null)
 export function AuthProvider({ children }) {
   const [session, setSession] = useState(null)
   const [profile, setProfile] = useState(null)
+  // Kompaniya nomi/manzili — chek sarlavhasi va kunlik hisobot uchun kerak.
+  const [company, setCompany] = useState(null)
   // profile === null bilan "hali tekshirilmagan" holatini ajratish uchun.
   const [profileChecked, setProfileChecked] = useState(false)
   const [loading, setLoading] = useState(true)
@@ -18,6 +20,7 @@ export function AuthProvider({ children }) {
   const loadProfile = useCallback(async (userId) => {
     if (!userId) {
       setProfile(null)
+      setCompany(null)
       setProfileChecked(true)
       return null
     }
@@ -31,6 +34,7 @@ export function AuthProvider({ children }) {
     if (error) {
       console.error(error)
       setProfile(null)
+      setCompany(null)
       setProfileChecked(true)
       return null
     }
@@ -39,6 +43,16 @@ export function AuthProvider({ children }) {
     // Xodim avval tanlagan tili shu qurilmada ham avtomatik yuklansin.
     if (data?.preferred_language) {
       setLanguage(data.preferred_language)
+    }
+    if (data?.company_id) {
+      const { data: companyRow } = await supabase
+        .from('companies')
+        .select('id, name, address')
+        .eq('id', data.company_id)
+        .maybeSingle()
+      setCompany(companyRow || null)
+    } else {
+      setCompany(null)
     }
     return data
   }, [])
@@ -64,6 +78,7 @@ export function AuthProvider({ children }) {
         await loadProfile(newSession.user.id)
       } else {
         setProfile(null)
+        setCompany(null)
       }
     })
 
@@ -123,6 +138,7 @@ export function AuthProvider({ children }) {
   const value = {
     session,
     profile,
+    company,
     profileChecked,
     loading,
     unlocked,
