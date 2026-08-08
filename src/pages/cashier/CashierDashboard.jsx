@@ -8,7 +8,10 @@ import { translateError } from '../../lib/errors'
 import POSGrid from '../../components/cashier/POSGrid'
 import Receipt from '../../components/cashier/Receipt'
 import PreOrderForm from '../../components/orders/PreOrderForm'
+import ZReport from '../../components/reports/ZReport'
+import ConfirmDialog from '../../components/ui/ConfirmDialog'
 import { useToast } from '../../components/ui/Toast'
+import { todayInTashkent } from '../../lib/businessDay'
 
 function startOfDay() {
   const d = new Date()
@@ -29,6 +32,9 @@ export default function CashierDashboard() {
   const [cart, setCart] = useState([])
   const [receipt, setReceipt] = useState(null)
   const [preOrderOpen, setPreOrderOpen] = useState(false)
+  const [closeConfirmOpen, setCloseConfirmOpen] = useState(false)
+  const [closing, setClosing] = useState(false)
+  const [zReport, setZReport] = useState(null)
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -76,15 +82,20 @@ export default function CashierDashboard() {
       return
     }
     setSaving(true)
-    const rows = cart.map((item) => ({ company_id: profile.company_id, cashier_id: profile.id, product_id: item.product.id, quantity: item.quantity, unit_price: item.product.price, total: item.product.price * item.quantity }))
-    const { data: inserted, error: insertError } = await supabase.from('sales').insert(rows).select('id, product_id, quantity, unit_price, total, products(name)')
+    // Savatdagi har bir mahsulot alohida `sales` qatori bo'ladi, lekin
+    // hammasi bitta chek. Umumiy receipt_id chek raqami bo'lib xizmat
+    // qiladi va kunlik hisobotda tranzaksiyalarni to'g'ri sanashga imkon
+    // beradi (20260808110000 migratsiyasi).
+    const receiptId = crypto.randomUUID()
+    const rows = cart.map((item) => ({ company_id: profile.company_id, cashier_id: profile.id, product_id: item.product.id, quantity: item.quantity, unit_price: item.product.price, total: item.product.price * item.quantity, receipt_id: receiptId }))
+    const { error: insertError } = await supabase.from('sales').insert(rows)
     if (insertError) setError(translateError(t, insertError))
     else {
       await Promise.all(cart.map((item) => supabase.from('display_inventory').update({ quantity_available: Math.max(0, (inventory[item.product.id] || 0) - item.quantity), updated_at: new Date().toISOString() }).eq('company_id', profile.company_id).eq('product_id', item.product.id)))
       setReceipt({
         items: cart,
         total: cart.reduce((sum, item) => sum + item.product.price * item.quantity, 0),
-        number: inserted?.[0]?.id,
+        number: receiptId,
         createdAt: new Date().toISOString(),
         cashierName: profile.full_name,
         companyName: company?.name,
@@ -95,6 +106,22 @@ export default function CashierDashboard() {
     }
     setSaving(false)
     load()
+  }
+
+  // Smena oxirida kunni yopish. Hisobot butun kompaniya bo'yicha (boshqa
+  // kassir savdosi ham kiradi) — serverdagi close_day() RPC hisoblaydi.
+  async function closeDay() {
+    setCloseConfirmOpen(false)
+    setError('')
+    setClosing(true)
+    const { data, error: rpcError } = await supabase.rpc('close_day', { p_date: todayInTashkent() })
+    setClosing(false)
+    if (rpcError) {
+      setError(translateError(t, rpcError))
+      return
+    }
+    setZReport(data)
+    toast.success(t('dailyClose.closed'))
   }
 
   const todayTotal = sales.reduce((sum, s) => sum + Number(s.total), 0)
@@ -110,13 +137,39 @@ export default function CashierDashboard() {
         {preOrderOpen ? <PreOrderForm products={products} onSaved={() => { setPreOrderOpen(false); toast.success(t('preOrder.created')) }} onCancel={() => setPreOrderOpen(false)} /> : <POSGrid products={products} inventory={inventory} cart={cart} onAdd={addToCart} onRemove={(id) => setCart((items) => items.filter((item) => item.product.id !== id))} onChangeQuantity={changeQuantity} onSell={recordSale} onClear={() => setCart([])} onPreOrder={() => setPreOrderOpen(true)} saving={saving} />}
         {error && <p className="text-sm text-bad font-semibold">{error}</p>}
 
-        <div className="card p-4 text-center">
-          <p className="text-2xl font-black text-brown-dark">
-            {todayTotal.toLocaleString(localeTag(i18n.language))} {t('common.currency')}
-          </p>
-          <p className="text-sm text-ink-muted font-semibold">{t('cashier.todayBalance')}</p>
+        <div className="card p-4 flex flex-col items-center gap-3">
+          <div className="text-center">
+            <p className="text-2xl font-black text-brown-dark">
+              {todayTotal.toLocaleString(localeTag(i18n.language))} {t('common.currency')}
+            </p>
+            <p className="text-sm text-ink-muted font-semibold">{t('cashier.todayBalance')}</p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setCloseConfirmOpen(true)}
+            disabled={closing}
+            className="btn-secondary h-12 w-full max-w-xs"
+          >
+            🧾 {closing ? t('common.saving') : t('dailyClose.button')}
+          </button>
         </div>
         {receipt && <Receipt receipt={receipt} onClose={() => setReceipt(null)} />}
+        {closeConfirmOpen && (
+          <ConfirmDialog
+            title={t('dailyClose.button')}
+            message={t('dailyClose.confirmMessage')}
+            onConfirm={closeDay}
+            onCancel={() => setCloseConfirmOpen(false)}
+          />
+        )}
+        {zReport && (
+          <ZReport
+            report={zReport}
+            companyName={company?.name}
+            closedByName={profile.full_name}
+            onClose={() => setZReport(null)}
+          />
+        )}
 
         <div className="flex flex-col gap-2">
           <h2 className="font-extrabold text-brown-dark">{t('cashier.myTodaySales')}</h2>

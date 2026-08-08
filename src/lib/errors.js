@@ -30,6 +30,8 @@ const KNOWN_ERRORS = {
   'Faqat kompaniya egasi tavsiyani rad eta oladi': 'errors.ownerOnlyPriceReject',
   "Faqat egasi yoki menejer bashorat yarata oladi": 'errors.ownerManagerOnlyForecast',
   'Mahsulot topilmadi': 'errors.productNotFound',
+  'Faqat kassir yoki kompaniya egasi kunni yopa oladi': 'errors.ownerCashierOnlyCloseDay',
+  "Kelajakdagi kunni yopib bo'lmaydi": 'errors.futureDateClose',
 }
 
 export function translateError(t, error) {

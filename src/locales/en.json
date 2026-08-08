@@ -150,7 +150,8 @@
     "sales": "Sales",
     "forecast": "Forecast",
     "pricing": "Price recommendations",
-    "display": "Display"
+    "display": "Display",
+    "dailyClose": "Daily close"
   },
   "sales": {
     "todayTotal": "Today's total sales",
@@ -315,6 +316,30 @@
     "colPrice": "Price",
     "colCustomer": "Customer"
   },
+  "dailyClose": {
+    "title": "Close the day",
+    "hint": "Press at the end of the shift — the whole company's sales for that day are totalled and saved.",
+    "button": "Close the day",
+    "recloseButton": "Recalculate",
+    "confirmMessage": "Close out today? The report is saved and the owner can review it later.",
+    "confirmReclose": "This day is already closed. Recalculate with the newer sales?",
+    "closed": "Day closed",
+    "alreadyClosedToday": "Today has already been closed",
+    "receiptTitle": "DAILY REPORT (Z)",
+    "reportDate": "Report date",
+    "closedAt": "Closed at",
+    "closedBy": "Closed by",
+    "byProduct": "By product",
+    "transactions": "Transactions",
+    "itemsSold": "Items sold",
+    "average": "Average transaction",
+    "grandTotal": "TOTAL SALES",
+    "footer": "Day complete",
+    "history": "Past days",
+    "view": "View",
+    "noReports": "No closed days yet",
+    "noSalesThatDay": "No sales on that day"
+  },
   "security": {
     "connectedDevices": "Connected devices",
     "noDevices": "No devices yet",
@@ -358,11 +383,62 @@
     "myTodaySales": "My sales today",
     "noSales": "No sales yet"
   },
-  "pos": {"all":"All","search":"Search","cart":"Cart","sell":"Sell","clear":"Clear","preOrder":"Pre-order","available":"Available","soldOut":"Sold out","weightInput":"Weight","enterWeight":"Enter weight","cartEmpty":"Cart is empty","total":"Total","saleSuccess":"Sale recorded"},
-  "categories": {"non":"Bread","pishiriq":"Pastries","tort":"Cakes","shirinlik":"Sweets","ichimlik":"Drinks","boshqa":"Other"},
-  "preOrder": {"title":"Pre-order","customerName":"Customer name","phone":"Phone","pickupDate":"Pickup date","pickupTime":"Pickup time","notes":"Notes","submit":"Create order","created":"Order created","status":{"label":"Status","kutilmoqda":"Waiting","tayyor":"Ready","berildi":"Given","bekor":"Cancelled"}},
-  "receipt": {"print":"Print","share":"Share","close":"Close","number":"Receipt","date":"Date","cashier":"Cashier","itemCount":"Items","grandTotal":"TOTAL","thanks":"Thank you!","comeAgain":"Please come again!"},
-  "products": {"uploadImage":"Upload image","imageError":"JPG, PNG or WebP up to 2 MB"},
+  "pos": {
+    "all": "All",
+    "search": "Search",
+    "cart": "Cart",
+    "sell": "Sell",
+    "clear": "Clear",
+    "preOrder": "Pre-order",
+    "available": "Available",
+    "soldOut": "Sold out",
+    "weightInput": "Weight",
+    "enterWeight": "Enter weight",
+    "cartEmpty": "Cart is empty",
+    "total": "Total",
+    "saleSuccess": "Sale recorded"
+  },
+  "categories": {
+    "non": "Bread",
+    "pishiriq": "Pastries",
+    "tort": "Cakes",
+    "shirinlik": "Sweets",
+    "ichimlik": "Drinks",
+    "boshqa": "Other"
+  },
+  "preOrder": {
+    "title": "Pre-order",
+    "customerName": "Customer name",
+    "phone": "Phone",
+    "pickupDate": "Pickup date",
+    "pickupTime": "Pickup time",
+    "notes": "Notes",
+    "submit": "Create order",
+    "created": "Order created",
+    "status": {
+      "label": "Status",
+      "kutilmoqda": "Waiting",
+      "tayyor": "Ready",
+      "berildi": "Given",
+      "bekor": "Cancelled"
+    }
+  },
+  "receipt": {
+    "print": "Print",
+    "share": "Share",
+    "close": "Close",
+    "number": "Receipt",
+    "date": "Date",
+    "cashier": "Cashier",
+    "itemCount": "Items",
+    "grandTotal": "TOTAL",
+    "thanks": "Thank you!",
+    "comeAgain": "Please come again!"
+  },
+  "products": {
+    "uploadImage": "Upload image",
+    "imageError": "JPG, PNG or WebP up to 2 MB"
+  },
   "errors": {
     "notAuthenticated": "Not authenticated",
     "alreadyBelongToCompany": "You already belong to a company",
@@ -390,7 +466,9 @@
     "recommendationNotFound": "Recommendation not found or already decided",
     "ownerOnlyPriceReject": "Only the company owner can reject a recommendation",
     "ownerManagerOnlyForecast": "Only the owner or manager can generate a forecast",
-    "productNotFound": "Product not found"
+    "productNotFound": "Product not found",
+    "ownerCashierOnlyCloseDay": "Only a cashier or the owner can close the day",
+    "futureDateClose": "A future day cannot be closed"
   },
   "marketing": {
     "nav": {

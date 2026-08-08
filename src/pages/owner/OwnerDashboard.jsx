@@ -8,6 +8,7 @@ import InventoryTab from '../../features/InventoryTab'
 import OrdersTab from '../../features/OrdersTab'
 import SalesTab from '../../features/SalesTab'
 import ReportsTab from '../../features/ReportsTab'
+import DailyCloseTab from '../../features/DailyCloseTab'
 import SecurityTab from '../../features/SecurityTab'
 import ForecastTab from '../../features/ForecastTab'
 import PricingTab from '../../features/PricingTab'
@@ -22,6 +23,7 @@ const PANELS = {
   orders: OrdersTab,
   sales: SalesTab,
   reports: ReportsTab,
+  dailyClose: DailyCloseTab,
   security: SecurityTab,
   forecast: ForecastTab,
   pricing: PricingTab,
@@ -46,7 +48,13 @@ export default function OwnerDashboard() {
         { key: 'sales', label: t('nav.sales'), icon: 'cash' },
       ],
     },
-    { title: t('navGroups.finance'), items: [{ key: 'reports', label: t('nav.reports'), icon: 'chart' }] },
+    {
+      title: t('navGroups.finance'),
+      items: [
+        { key: 'reports', label: t('nav.reports'), icon: 'chart' },
+        { key: 'dailyClose', label: t('nav.dailyClose'), icon: 'cash' },
+      ],
+    },
     {
       title: t('navGroups.ai'),
       items: [
@@ -65,6 +73,7 @@ export default function OwnerDashboard() {
     orders: t('nav.orders'),
     sales: t('nav.sales'),
     reports: t('nav.reports'),
+    dailyClose: t('nav.dailyClose'),
     security: t('navGroups.security'),
     forecast: t('nav.forecast'),
     pricing: t('nav.pricing'),

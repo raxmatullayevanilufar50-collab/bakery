@@ -150,7 +150,8 @@
     "sales": "Продажи",
     "forecast": "Прогноз",
     "pricing": "Рекомендации по цене",
-    "display": "Витрина"
+    "display": "Витрина",
+    "dailyClose": "Закрытие дня"
   },
   "sales": {
     "todayTotal": "Продажи за сегодня",
@@ -315,6 +316,30 @@
     "colPrice": "Цена",
     "colCustomer": "Клиент"
   },
+  "dailyClose": {
+    "title": "Закрытие дня",
+    "hint": "Нажмите в конце смены — продажи компании за этот день будут посчитаны и сохранены.",
+    "button": "Закрыть день",
+    "recloseButton": "Пересчитать",
+    "confirmMessage": "Завершить сегодняшний день? Отчёт сохранится, владелец увидит его позже.",
+    "confirmReclose": "День уже закрыт. Пересчитать с учётом новых продаж?",
+    "closed": "День закрыт",
+    "alreadyClosedToday": "Сегодняшний день уже закрыт",
+    "receiptTitle": "ДНЕВНОЙ ОТЧЁТ (Z)",
+    "reportDate": "Дата отчёта",
+    "closedAt": "Время закрытия",
+    "closedBy": "Закрыл",
+    "byProduct": "По товарам",
+    "transactions": "Транзакции",
+    "itemsSold": "Продано товаров",
+    "average": "Средний чек",
+    "grandTotal": "ИТОГО ПРОДАЖ",
+    "footer": "День завершён",
+    "history": "Прошедшие дни",
+    "view": "Открыть",
+    "noReports": "Пока нет закрытых дней",
+    "noSalesThatDay": "В этот день продаж не было"
+  },
   "security": {
     "connectedDevices": "Подключённые устройства",
     "noDevices": "Пока нет устройств",
@@ -358,11 +383,62 @@
     "myTodaySales": "Мои продажи сегодня",
     "noSales": "Пока нет продаж"
   },
-  "pos": {"all":"Все","search":"Поиск","cart":"Корзина","sell":"Продать","clear":"Очистить","preOrder":"Предзаказ","available":"Доступно","soldOut":"Нет в наличии","weightInput":"Вес","enterWeight":"Введите вес","cartEmpty":"Корзина пуста","total":"Итого","saleSuccess":"Продажа записана"},
-  "categories": {"non":"Хлеб","pishiriq":"Выпечка","tort":"Торты","shirinlik":"Сладости","ichimlik":"Напитки","boshqa":"Другое"},
-  "preOrder": {"title":"Предзаказ","customerName":"Имя клиента","phone":"Телефон","pickupDate":"Дата получения","pickupTime":"Время получения","notes":"Примечания","submit":"Создать заказ","created":"Заказ создан","status":{"label":"Статус","kutilmoqda":"Ожидает","tayyor":"Готов","berildi":"Выдан","bekor":"Отменён"}},
-  "receipt": {"print":"Печать","share":"Поделиться","close":"Закрыть","number":"Чек","date":"Дата","cashier":"Кассир","itemCount":"Количество товаров","grandTotal":"ИТОГО","thanks":"Спасибо!","comeAgain":"Приходите ещё!"},
-  "products": {"uploadImage":"Загрузить фото","imageError":"JPG, PNG или WebP до 2 МБ"},
+  "pos": {
+    "all": "Все",
+    "search": "Поиск",
+    "cart": "Корзина",
+    "sell": "Продать",
+    "clear": "Очистить",
+    "preOrder": "Предзаказ",
+    "available": "Доступно",
+    "soldOut": "Нет в наличии",
+    "weightInput": "Вес",
+    "enterWeight": "Введите вес",
+    "cartEmpty": "Корзина пуста",
+    "total": "Итого",
+    "saleSuccess": "Продажа записана"
+  },
+  "categories": {
+    "non": "Хлеб",
+    "pishiriq": "Выпечка",
+    "tort": "Торты",
+    "shirinlik": "Сладости",
+    "ichimlik": "Напитки",
+    "boshqa": "Другое"
+  },
+  "preOrder": {
+    "title": "Предзаказ",
+    "customerName": "Имя клиента",
+    "phone": "Телефон",
+    "pickupDate": "Дата получения",
+    "pickupTime": "Время получения",
+    "notes": "Примечания",
+    "submit": "Создать заказ",
+    "created": "Заказ создан",
+    "status": {
+      "label": "Статус",
+      "kutilmoqda": "Ожидает",
+      "tayyor": "Готов",
+      "berildi": "Выдан",
+      "bekor": "Отменён"
+    }
+  },
+  "receipt": {
+    "print": "Печать",
+    "share": "Поделиться",
+    "close": "Закрыть",
+    "number": "Чек",
+    "date": "Дата",
+    "cashier": "Кассир",
+    "itemCount": "Количество товаров",
+    "grandTotal": "ИТОГО",
+    "thanks": "Спасибо!",
+    "comeAgain": "Приходите ещё!"
+  },
+  "products": {
+    "uploadImage": "Загрузить фото",
+    "imageError": "JPG, PNG или WebP до 2 МБ"
+  },
   "errors": {
     "notAuthenticated": "Не авторизовано",
     "alreadyBelongToCompany": "Вы уже принадлежите компании",
@@ -390,7 +466,9 @@
     "recommendationNotFound": "Рекомендация не найдена или уже обработана",
     "ownerOnlyPriceReject": "Только владелец компании может отклонить рекомендацию",
     "ownerManagerOnlyForecast": "Только владелец или менеджер может создать прогноз",
-    "productNotFound": "Товар не найден"
+    "productNotFound": "Товар не найден",
+    "ownerCashierOnlyCloseDay": "Закрыть день может только кассир или владелец",
+    "futureDateClose": "Нельзя закрыть будущий день"
   },
   "marketing": {
     "nav": {

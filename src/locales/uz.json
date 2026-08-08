@@ -150,7 +150,8 @@
     "sales": "Savdo",
     "forecast": "Bashorat",
     "pricing": "Narx tavsiyalari",
-    "display": "Vitrina"
+    "display": "Vitrina",
+    "dailyClose": "Kunlik yopish"
   },
   "sales": {
     "todayTotal": "Bugungi jami savdo",
@@ -315,6 +316,30 @@
     "colPrice": "Narx",
     "colCustomer": "Mijoz"
   },
+  "dailyClose": {
+    "title": "Kunni yopish",
+    "hint": "Smena oxirida bosing — o'sha kunning butun kompaniya bo'yicha savdosi hisoblanadi va saqlanadi.",
+    "button": "Kunni yopish",
+    "recloseButton": "Qayta hisoblash",
+    "confirmMessage": "Bugungi kun yakunlansinmi? Hisobot saqlanadi va keyinchalik Owner ko'radi.",
+    "confirmReclose": "Bu kun allaqachon yopilgan. Yangi savdolar bilan qayta hisoblansinmi?",
+    "closed": "Kun yopildi",
+    "alreadyClosedToday": "Bugungi kun allaqachon yopilgan",
+    "receiptTitle": "KUNLIK HISOBOT (Z)",
+    "reportDate": "Hisobot sanasi",
+    "closedAt": "Yopilgan vaqt",
+    "closedBy": "Yopdi",
+    "byProduct": "Mahsulotlar bo'yicha",
+    "transactions": "Tranzaksiyalar",
+    "itemsSold": "Sotilgan mahsulot",
+    "average": "O'rtacha chek",
+    "grandTotal": "JAMI SAVDO",
+    "footer": "Kun yakunlandi",
+    "history": "O'tgan kunlar",
+    "view": "Ko'rish",
+    "noReports": "Hozircha yopilgan kunlar yo'q",
+    "noSalesThatDay": "Bu kuni savdo bo'lmagan"
+  },
   "security": {
     "connectedDevices": "Ulangan qurilmalar",
     "noDevices": "Hozircha qurilmalar yo'q",
@@ -358,11 +383,62 @@
     "myTodaySales": "Bugungi savdolarim",
     "noSales": "Hozircha savdo yo'q"
   },
-  "pos": {"all":"Barchasi","search":"Qidirish","cart":"Savat","sell":"Sotish","clear":"Tozalash","preOrder":"Oldindan buyurtma","available":"Mavjud","soldOut":"Tugadi","weightInput":"Og'irlik","enterWeight":"Og'irlikni kiriting","cartEmpty":"Savat bo'sh","total":"Jami","saleSuccess":"Savdo qayd etildi"},
-  "categories": {"non":"Non","pishiriq":"Pishiriq","tort":"Tort","shirinlik":"Shirinlik","ichimlik":"Ichimlik","boshqa":"Boshqa"},
-  "preOrder": {"title":"Oldindan buyurtma","customerName":"Mijoz ismi","phone":"Telefon","pickupDate":"Olib ketish sanasi","pickupTime":"Olib ketish vaqti","notes":"Izohlar","submit":"Buyurtma yaratish","created":"Buyurtma yaratildi","status":{"label":"Holat","kutilmoqda":"Kutilmoqda","tayyor":"Tayyor","berildi":"Berildi","bekor":"Bekor"}},
-  "receipt": {"print":"Chop etish","share":"Ulashish","close":"Yopish","number":"Chek","date":"Sana","cashier":"Kassir","itemCount":"Mahsulotlar soni","grandTotal":"JAMI","thanks":"Rahmat!","comeAgain":"Yana tashrif buyuring!"},
-  "products": {"uploadImage":"Rasm yuklash","imageError":"JPG, PNG yoki WebP, 2 MB gacha bo'lishi kerak"},
+  "pos": {
+    "all": "Barchasi",
+    "search": "Qidirish",
+    "cart": "Savat",
+    "sell": "Sotish",
+    "clear": "Tozalash",
+    "preOrder": "Oldindan buyurtma",
+    "available": "Mavjud",
+    "soldOut": "Tugadi",
+    "weightInput": "Og'irlik",
+    "enterWeight": "Og'irlikni kiriting",
+    "cartEmpty": "Savat bo'sh",
+    "total": "Jami",
+    "saleSuccess": "Savdo qayd etildi"
+  },
+  "categories": {
+    "non": "Non",
+    "pishiriq": "Pishiriq",
+    "tort": "Tort",
+    "shirinlik": "Shirinlik",
+    "ichimlik": "Ichimlik",
+    "boshqa": "Boshqa"
+  },
+  "preOrder": {
+    "title": "Oldindan buyurtma",
+    "customerName": "Mijoz ismi",
+    "phone": "Telefon",
+    "pickupDate": "Olib ketish sanasi",
+    "pickupTime": "Olib ketish vaqti",
+    "notes": "Izohlar",
+    "submit": "Buyurtma yaratish",
+    "created": "Buyurtma yaratildi",
+    "status": {
+      "label": "Holat",
+      "kutilmoqda": "Kutilmoqda",
+      "tayyor": "Tayyor",
+      "berildi": "Berildi",
+      "bekor": "Bekor"
+    }
+  },
+  "receipt": {
+    "print": "Chop etish",
+    "share": "Ulashish",
+    "close": "Yopish",
+    "number": "Chek",
+    "date": "Sana",
+    "cashier": "Kassir",
+    "itemCount": "Mahsulotlar soni",
+    "grandTotal": "JAMI",
+    "thanks": "Rahmat!",
+    "comeAgain": "Yana tashrif buyuring!"
+  },
+  "products": {
+    "uploadImage": "Rasm yuklash",
+    "imageError": "JPG, PNG yoki WebP, 2 MB gacha bo'lishi kerak"
+  },
   "errors": {
     "notAuthenticated": "Avtorizatsiyadan o'tilmagan",
     "alreadyBelongToCompany": "Siz allaqachon bir kompaniyaga tegishlisiz",
@@ -390,7 +466,9 @@
     "recommendationNotFound": "Tavsiya topilmadi yoki allaqachon hal qilingan",
     "ownerOnlyPriceReject": "Faqat kompaniya egasi tavsiyani rad eta oladi",
     "ownerManagerOnlyForecast": "Faqat egasi yoki menejer bashorat yarata oladi",
-    "productNotFound": "Mahsulot topilmadi"
+    "productNotFound": "Mahsulot topilmadi",
+    "ownerCashierOnlyCloseDay": "Faqat kassir yoki kompaniya egasi kunni yopa oladi",
+    "futureDateClose": "Kelajakdagi kunni yopib bo'lmaydi"
   },
   "marketing": {
     "nav": {
