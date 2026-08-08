@@ -25,6 +25,11 @@ const KNOWN_ERRORS = {
   "Bu taklif kodi profil bilan bog'lanmagan": 'errors.inviteNotLinked',
   "PIN allaqachon o'rnatilgan": 'errors.pinAlreadySet',
   "PIN hali o'rnatilmagan": 'errors.pinNotSet',
+  'Faqat kompaniya egasi narxni tasdiqlashi mumkin': 'errors.ownerOnlyPriceApproval',
+  'Tavsiya topilmadi yoki allaqachon hal qilingan': 'errors.recommendationNotFound',
+  'Faqat kompaniya egasi tavsiyani rad eta oladi': 'errors.ownerOnlyPriceReject',
+  "Faqat egasi yoki menejer bashorat yarata oladi": 'errors.ownerManagerOnlyForecast',
+  'Mahsulot topilmadi': 'errors.productNotFound',
 }
 
 export function translateError(t, error) {

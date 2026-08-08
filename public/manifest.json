@@ -1,0 +1,21 @@
+{
+  "id": "/",
+  "name": "Bakery System",
+  "short_name": "Bakery System",
+  "description": "Nonvoyxona va pekarniyalar uchun boshqaruv tizimi — xodimlar, ombor, savdo, ishlab chiqarish va AI yordamchisi bitta ilovada.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#fff8f0",
+  "theme_color": "#e8752a",
+  "lang": "uz",
+  "dir": "ltr",
+  "orientation": "any",
+  "categories": ["business", "productivity", "food"],
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

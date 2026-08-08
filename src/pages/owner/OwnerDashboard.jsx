@@ -9,7 +9,10 @@ import OrdersTab from '../../features/OrdersTab'
 import SalesTab from '../../features/SalesTab'
 import ReportsTab from '../../features/ReportsTab'
 import SecurityTab from '../../features/SecurityTab'
+import ForecastTab from '../../features/ForecastTab'
+import PricingTab from '../../features/PricingTab'
 import { useLowStockCount } from '../../lib/useLowStockCount'
+import { usePendingPriceRecommendationsCount } from '../../lib/usePendingPriceRecommendationsCount'
 
 const PANELS = {
   employees: EmployeesTab,
@@ -20,6 +23,8 @@ const PANELS = {
   sales: SalesTab,
   reports: ReportsTab,
   security: SecurityTab,
+  forecast: ForecastTab,
+  pricing: PricingTab,
 }
 
 export default function OwnerDashboard() {
@@ -27,21 +32,29 @@ export default function OwnerDashboard() {
   const [active, setActive] = useState('employees')
   const Panel = PANELS[active]
   const lowStockCount = useLowStockCount()
+  const pendingRecCount = usePendingPriceRecommendationsCount()
 
   const navGroups = [
-    { title: t('navGroups.management'), items: [{ key: 'employees', label: t('nav.employees'), icon: '👥' }] },
+    { title: t('navGroups.management'), items: [{ key: 'employees', label: t('nav.employees'), icon: 'users' }] },
     {
       title: t('navGroups.operations'),
       items: [
-        { key: 'schedule', label: t('nav.schedule'), icon: '📅' },
-        { key: 'production', label: t('nav.production'), icon: '🥖' },
-        { key: 'inventory', label: t('nav.inventory'), icon: '🌾', badge: lowStockCount },
-        { key: 'orders', label: t('nav.orders'), icon: '🚚' },
-        { key: 'sales', label: t('nav.sales'), icon: '💰' },
+        { key: 'schedule', label: t('nav.schedule'), icon: 'calendar' },
+        { key: 'production', label: t('nav.production'), icon: 'bread' },
+        { key: 'inventory', label: t('nav.inventory'), icon: 'warehouse', badge: lowStockCount },
+        { key: 'orders', label: t('nav.orders'), icon: 'truck' },
+        { key: 'sales', label: t('nav.sales'), icon: 'cash' },
       ],
     },
-    { title: t('navGroups.finance'), items: [{ key: 'reports', label: t('nav.reports'), icon: '📊' }] },
-    { title: t('navGroups.security'), items: [{ key: 'security', label: t('nav.security'), icon: '🛡️' }] },
+    { title: t('navGroups.finance'), items: [{ key: 'reports', label: t('nav.reports'), icon: 'chart' }] },
+    {
+      title: t('navGroups.ai'),
+      items: [
+        { key: 'forecast', label: t('nav.forecast'), icon: 'star' },
+        { key: 'pricing', label: t('nav.pricing'), icon: 'settings', badge: pendingRecCount },
+      ],
+    },
+    { title: t('navGroups.security'), items: [{ key: 'security', label: t('nav.security'), icon: 'lock' }] },
   ]
 
   const titles = {
@@ -53,6 +66,8 @@ export default function OwnerDashboard() {
     sales: t('nav.sales'),
     reports: t('nav.reports'),
     security: t('navGroups.security'),
+    forecast: t('nav.forecast'),
+    pricing: t('nav.pricing'),
   }
 
   return (

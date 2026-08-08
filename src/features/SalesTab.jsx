@@ -9,12 +9,19 @@ import { exportToExcel } from '../lib/xlsxExport'
 import VoiceRecorder from '../components/VoiceRecorder'
 
 const HISTORY_LIMIT = 500
-const EMPTY_DRAFT = { productId: '', quantity: '', total: '', customerName: '' }
+const EMPTY_ROW = { productId: '', quantity: '', total: '' }
 
 function startOfDay() {
   const d = new Date()
   d.setHours(0, 0, 0, 0)
   return d
+}
+
+// Ko'p punktli gapni ("3 ta somsa, 2 ta non sotildi") aniqlash uchun
+// oddiy signal — vergul yoki "va" bo'lsa, mahalliy (bitta-punktli)
+// parser yetarli emas, AI-asosli tahlilga murojaat qilinadi.
+function looksMultiItem(transcript) {
+  return /,| va /.test(transcript.toLowerCase())
 }
 
 export default function SalesTab() {
@@ -30,7 +37,10 @@ export default function SalesTab() {
   const [filters, setFilters] = useState({ date: '', employeeId: '', productId: '' })
 
   const [entryMode, setEntryMode] = useState(null) // null | 'voice' | 'manual'
-  const [draft, setDraft] = useState(null)
+  const [draftItems, setDraftItems] = useState(null)
+  const [customerName, setCustomerName] = useState('')
+  const [aiTranscript, setAiTranscript] = useState('')
+  const [parsing, setParsing] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [saving, setSaving] = useState(false)
@@ -85,53 +95,142 @@ export default function SalesTab() {
     loadTodayTotal()
   }, [loadTodayTotal])
 
-  function handleTranscript(transcript) {
-    setError('')
+  // Realtime — boshqa qurilmadan (masalan ovoz orqali) kiritilgan savdo
+  // ham darhol ko'rinadi (4-bo'lim, 8-talab; 20260729090100 migratsiyasi).
+  useEffect(() => {
+    const channel = supabase
+      .channel('sales-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'sales' }, () => {
+        loadSales()
+        loadTodayTotal()
+      })
+      .subscribe()
+    return () => supabase.removeChannel(channel)
+  }, [loadSales, loadTodayTotal])
+
+  function rowFromLocalParse(transcript) {
     const parsed = parseSaleUtterance(transcript, products)
-    setDraft({
-      productId: parsed.productId,
-      quantity: parsed.quantity ? String(parsed.quantity) : '',
-      total: parsed.total ? String(parsed.total) : '',
-      customerName: parsed.customerName,
+    return {
+      row: {
+        productId: parsed.productId,
+        quantity: parsed.quantity ? String(parsed.quantity) : '',
+        total: parsed.total ? String(parsed.total) : '',
+      },
+      customerName: parsed.customerName || '',
+    }
+  }
+
+  async function handleTranscript(transcript) {
+    setError('')
+    const local = rowFromLocalParse(transcript)
+
+    // Yagona-punktli, mahalliy parser to'liq topa olgan holatda — tezkor
+    // yo'l, tarmoqqa chiqmaydi.
+    if (!looksMultiItem(transcript) && local.row.productId) {
+      setDraftItems([local.row])
+      setCustomerName(local.customerName)
+      setAiTranscript('')
+      setEntryMode(null)
+      return
+    }
+
+    setParsing(true)
+    const { data, error: invokeError } = await supabase.functions.invoke('parse-voice-command', {
+      body: { transcript },
     })
+    setParsing(false)
+
+    if (!invokeError && data?.items?.length > 0) {
+      setDraftItems(
+        data.items.map((item) => {
+          const product = products.find((p) => p.id === item.productId)
+          const total = product ? Number(product.price) * Number(item.quantity) : 0
+          return { productId: item.productId, quantity: String(item.quantity), total: String(total) }
+        })
+      )
+      setCustomerName(local.customerName)
+      setAiTranscript(transcript)
+      setEntryMode(null)
+      return
+    }
+
+    // AI ham hech narsa topa olmadi — mahalliy natija (bo'lsa) yoki
+    // bo'sh qator bilan qo'lda to'ldirish uchun ekran ochiladi.
+    setDraftItems([local.row.productId ? local.row : { ...EMPTY_ROW }])
+    setCustomerName(local.customerName)
+    setAiTranscript('')
     setEntryMode(null)
   }
 
   function openManualEntry() {
     setError('')
-    setDraft(EMPTY_DRAFT)
+    setDraftItems([{ ...EMPTY_ROW }])
+    setCustomerName('')
+    setAiTranscript('')
     setEntryMode(null)
   }
 
-  function updateDraft(field) {
-    return (e) => setDraft((d) => ({ ...d, [field]: e.target.value }))
+  function updateRow(index, field) {
+    return (e) => {
+      const value = e.target.value
+      setDraftItems((rows) => rows.map((r, i) => (i === index ? { ...r, [field]: value } : r)))
+    }
+  }
+
+  function addRow() {
+    setDraftItems((rows) => [...rows, { ...EMPTY_ROW }])
+  }
+
+  function removeRow(index) {
+    setDraftItems((rows) => rows.filter((_, i) => i !== index))
   }
 
   async function confirmDraft() {
     setError('')
-    const quantity = Number(draft.quantity)
-    const total = Number(draft.total)
-    if (!draft.productId || !quantity || quantity <= 0 || !total || total <= 0) {
+    const rows = draftItems.map((r) => ({
+      productId: r.productId,
+      quantity: Number(r.quantity),
+      total: Number(r.total),
+    }))
+    const invalid = rows.some((r) => !r.productId || !r.quantity || r.quantity <= 0 || !r.total || r.total <= 0)
+    if (rows.length === 0 || invalid) {
       setError(t('voiceSale.invalidDraft'))
       return
     }
+
     setSaving(true)
-    const { error: insertError } = await supabase.from('sales').insert({
-      company_id: profile.company_id,
-      cashier_id: profile.id,
-      product_id: draft.productId,
-      quantity,
-      unit_price: total / quantity,
-      total,
-      customer_name: draft.customerName || null,
-    })
+    const { error: insertError } = await supabase.from('sales').insert(
+      rows.map((r) => ({
+        company_id: profile.company_id,
+        cashier_id: profile.id,
+        product_id: r.productId,
+        quantity: r.quantity,
+        unit_price: r.total / r.quantity,
+        total: r.total,
+        customer_name: customerName || null,
+      }))
+    )
     setSaving(false)
     if (insertError) {
       setError(translateError(t, insertError))
       return
     }
+
+    // AI orqali tahlil qilingan bo'lsa — shaffoflik uchun xom matn va
+    // natijani audit_logs'ga yozamiz (Owner audit jurnalida ko'radi).
+    if (aiTranscript) {
+      supabase.rpc('log_ai_voice_command', {
+        p_transcript: aiTranscript,
+        p_parsed: rows,
+        p_model: 'claude-haiku-4-5',
+        p_target_table: 'sales',
+      })
+    }
+
     setSuccess(t('voiceSale.saved'))
-    setDraft(null)
+    setDraftItems(null)
+    setCustomerName('')
+    setAiTranscript('')
     loadSales()
     loadTodayTotal()
     setTimeout(() => setSuccess(''), 3000)
@@ -159,7 +258,7 @@ export default function SalesTab() {
       </div>
 
       <div className="card p-5 flex flex-col items-center gap-3">
-        {entryMode !== 'voice' && !draft && (
+        {entryMode !== 'voice' && !draftItems && (
           <div className="flex gap-3 w-full max-w-sm">
             <button type="button" onClick={() => setEntryMode('voice')} className="btn-primary flex-1">
               🎤 {t('sales.voiceEntry')}
@@ -169,9 +268,10 @@ export default function SalesTab() {
             </button>
           </div>
         )}
-        {entryMode === 'voice' && !draft && (
+        {entryMode === 'voice' && !draftItems && (
           <>
             <VoiceRecorder onTranscript={handleTranscript} />
+            {parsing && <p className="text-sm text-ink-muted font-semibold">{t('voiceSale.analyzing')}</p>}
             <button type="button" onClick={() => setEntryMode(null)} className="text-sm text-ink-muted underline font-semibold">
               {t('common.back')}
             </button>
@@ -181,40 +281,59 @@ export default function SalesTab() {
 
       {success && <div className="card p-4 text-center text-good font-bold">{success}</div>}
 
-      {draft && (
+      {draftItems && (
         <div className="card p-4 flex flex-col gap-3">
           <h3 className="font-extrabold text-brown-dark">{t('voiceSale.confirmTitle')}</h3>
-          <select className="input" value={draft.productId} onChange={updateDraft('productId')}>
-            <option value="">{t('voiceSale.selectProduct')}</option>
-            {products.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.name}
-              </option>
-            ))}
-          </select>
-          <input
-            className="input"
-            type="number"
-            placeholder={t('voiceSale.quantity')}
-            value={draft.quantity}
-            onChange={updateDraft('quantity')}
-          />
-          <input
-            className="input"
-            type="number"
-            placeholder={t('voiceSale.total')}
-            value={draft.total}
-            onChange={updateDraft('total')}
-          />
+
+          {draftItems.map((row, index) => (
+            <div
+              key={index}
+              className="flex flex-wrap items-center gap-2 border-b border-brown/10 pb-3 last:border-0 last:pb-0"
+            >
+              <select className="input flex-1 min-w-[140px]" value={row.productId} onChange={updateRow(index, 'productId')}>
+                <option value="">{t('voiceSale.selectProduct')}</option>
+                {products.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.name}
+                  </option>
+                ))}
+              </select>
+              <input
+                className="input w-24"
+                type="number"
+                placeholder={t('voiceSale.quantity')}
+                value={row.quantity}
+                onChange={updateRow(index, 'quantity')}
+              />
+              <input
+                className="input w-28"
+                type="number"
+                placeholder={t('voiceSale.total')}
+                value={row.total}
+                onChange={updateRow(index, 'total')}
+              />
+              {draftItems.length > 1 && (
+                <button type="button" onClick={() => removeRow(index)} className="text-bad text-sm font-bold underline">
+                  {t('common.remove')}
+                </button>
+              )}
+            </div>
+          ))}
+
+          <button type="button" onClick={addRow} className="text-sm text-orange font-bold underline self-start">
+            + {t('voiceSale.addRow')}
+          </button>
+
           <input
             className="input"
             placeholder={t('voiceSale.customerName')}
-            value={draft.customerName}
-            onChange={updateDraft('customerName')}
+            value={customerName}
+            onChange={(e) => setCustomerName(e.target.value)}
           />
+
           {error && <p className="text-sm text-bad font-semibold">{error}</p>}
           <div className="flex gap-2">
-            <button type="button" onClick={() => setDraft(null)} className="btn-secondary flex-1">
+            <button type="button" onClick={() => setDraftItems(null)} className="btn-secondary flex-1">
               {t('voiceSale.no')}
             </button>
             <button type="button" onClick={confirmDraft} disabled={saving} className="btn-primary flex-1">

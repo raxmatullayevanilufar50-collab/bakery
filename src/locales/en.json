@@ -12,9 +12,11 @@
     "unknownEmployee": "Unknown employee",
     "unknown": "Unknown",
     "genericError": "Something went wrong",
-    "brand": "Bakery",
+    "brand": "Bakery System",
     "brandTagline": "Bakery",
-    "currency": "UZS"
+    "currency": "UZS",
+    "confirm": "Confirm",
+    "cancel": "Cancel"
   },
   "roles": {
     "owner": "Owner",
@@ -38,13 +40,6 @@
   },
   "languageSwitcher": {
     "label": "Language"
-  },
-  "landing": {
-    "subtitle": "Bakery management software",
-    "welcome": "Welcome! 👋",
-    "createCompany": "✨ Create a company",
-    "ownerLogin": "🔑 Log in as owner / manager",
-    "employeeLogin": "📱 Log in as employee"
   },
   "ownerSignup": {
     "title": "Create a company",
@@ -136,7 +131,8 @@
     "operations": "Operations",
     "finance": "Finance",
     "security": "Security",
-    "main": "Main"
+    "main": "Main",
+    "ai": "AI assistant"
   },
   "nav": {
     "employees": "Employees",
@@ -151,7 +147,10 @@
     "kassa": "Register",
     "productionLog": "Production log",
     "voiceSale": "Voice sale",
-    "sales": "Sales"
+    "sales": "Sales",
+    "forecast": "Forecast",
+    "pricing": "Price recommendations",
+    "display": "Display"
   },
   "sales": {
     "todayTotal": "Today's total sales",
@@ -172,8 +171,8 @@
   },
   "voiceSale": {
     "title": "Voice sale entry",
-    "example": "For example: \"sold five Buxanka to Aziz for 15000 UZS\"",
-    "invalidDraft": "Enter the product, quantity, and amount correctly",
+    "example": "For example: \"sold five Buxanka to Aziz for 15000 UZS\" or \"3 samsa, 2 bread sold\"",
+    "invalidDraft": "Enter the product, quantity, and amount correctly for every row",
     "confirmTitle": "Confirm?",
     "selectProduct": "Select a product",
     "quantity": "Quantity",
@@ -181,17 +180,21 @@
     "customerName": "Customer name (optional)",
     "saved": "Sale recorded",
     "yes": "Yes, save",
-    "no": "No, cancel"
+    "no": "No, cancel",
+    "analyzing": "AI is analyzing...",
+    "addRow": "Add another product"
   },
   "productionLog": {
     "title": "Production log",
-    "example": "For example: \"baked twenty Buxanka\"",
-    "invalidDraft": "Enter the product and quantity correctly",
+    "example": "For example: \"baked twenty Buxanka\" or \"ten samsa, five bread baked\"",
+    "invalidDraft": "Enter the product and quantity correctly for every row",
     "confirmTitle": "Confirm?",
     "selectProduct": "Select a product",
     "quantity": "Quantity",
     "todayEntries": "My entries today",
-    "noEntries": "No entries yet"
+    "noEntries": "No entries yet",
+    "analyzing": "AI is analyzing...",
+    "addRow": "Add another product"
   },
   "employees": {
     "companyCode": "Company code",
@@ -243,7 +246,33 @@
     "lowStock": "Running low!",
     "lowStockBannerTitle": "Running low",
     "lowStockBannerCount": "{{count}} items running low, restock needed",
-    "sortLowFirst": "Low stock first"
+    "sortLowFirst": "Low stock first",
+    "recipesTitle": "Recipes",
+    "recipesHint": "Set how much of each ingredient a product needs — used to auto-update stock from production logs and to drive price recommendations.",
+    "selectProductForRecipe": "Select a product",
+    "noRecipeYet": "No recipe set for this product yet",
+    "selectIngredient": "Select an ingredient",
+    "quantityPerUnitPlaceholder": "Amount per unit",
+    "unitCostPlaceholder": "Cost (UZS)"
+  },
+  "forecast": {
+    "title": "Tomorrow's forecast",
+    "subtitle": "Suggests how much of each product to prepare, based on sales history.",
+    "generate": "Generate forecast",
+    "generating": "Generating...",
+    "empty": "No forecast generated yet",
+    "createTask": "Create task"
+  },
+  "pricing": {
+    "pendingTitle": "Pending recommendations",
+    "noPending": "No new price recommendations yet",
+    "explaining": "AI is writing an explanation...",
+    "accept": "Accept",
+    "reject": "Reject",
+    "costLine": "Cost: {{oldCost}} → {{newCost}} UZS · Margin: {{margin}}%",
+    "historyTitle": "Decided recommendations",
+    "status_qabul_qilindi": "Accepted",
+    "status_rad_etildi": "Rejected"
   },
   "orders": {
     "newOrder": "New order",
@@ -261,6 +290,16 @@
     "driverLabel": "Driver: {{name}}"
   },
   "reports": {
+    "dailyTitle": "Daily report",
+    "weeklyTitle": "Weekly report",
+    "date": "Date",
+    "revenue": "Revenue",
+    "itemsSold": "Items sold",
+    "average": "Average transaction",
+    "transactions": "Transactions",
+    "byCategory": "Sales by category",
+    "hourly": "Hourly sales",
+    "weeklyTotal": "Weekly total",
     "todaySales": "Today's sales (UZS)",
     "todayProduced": "Produced today",
     "todayOrders": "Today's orders",
@@ -304,7 +343,8 @@
     "noOrders": "You have no orders assigned yet",
     "departed": "On my way",
     "delivered": "Delivered",
-    "finished": "Completed"
+    "finished": "Completed",
+    "statusUpdated": "Status updated"
   },
   "cashier": {
     "title": "Register",
@@ -318,6 +358,11 @@
     "myTodaySales": "My sales today",
     "noSales": "No sales yet"
   },
+  "pos": {"all":"All","search":"Search","cart":"Cart","sell":"Sell","clear":"Clear","preOrder":"Pre-order","available":"Available","soldOut":"Sold out","weightInput":"Weight","enterWeight":"Enter weight","cartEmpty":"Cart is empty","total":"Total","saleSuccess":"Sale recorded"},
+  "categories": {"non":"Bread","pishiriq":"Pastries","tort":"Cakes","shirinlik":"Sweets","ichimlik":"Drinks","boshqa":"Other"},
+  "preOrder": {"title":"Pre-order","customerName":"Customer name","phone":"Phone","pickupDate":"Pickup date","pickupTime":"Pickup time","notes":"Notes","submit":"Create order","created":"Order created","status":{"label":"Status","kutilmoqda":"Waiting","tayyor":"Ready","berildi":"Given","bekor":"Cancelled"}},
+  "receipt": {"print":"Print","share":"Share"},
+  "products": {"uploadImage":"Upload image","imageError":"JPG, PNG or WebP up to 2 MB"},
   "errors": {
     "notAuthenticated": "Not authenticated",
     "alreadyBelongToCompany": "You already belong to a company",
@@ -340,6 +385,85 @@
     "companyCodeNotFound": "Company code not found",
     "inviteNotLinked": "This invite code isn't linked to a profile",
     "pinAlreadySet": "PIN is already set",
-    "pinNotSet": "PIN hasn't been set yet"
+    "pinNotSet": "PIN hasn't been set yet",
+    "ownerOnlyPriceApproval": "Only the company owner can approve a price",
+    "recommendationNotFound": "Recommendation not found or already decided",
+    "ownerOnlyPriceReject": "Only the company owner can reject a recommendation",
+    "ownerManagerOnlyForecast": "Only the owner or manager can generate a forecast",
+    "productNotFound": "Product not found"
+  },
+  "marketing": {
+    "nav": {
+      "login": "Log in"
+    },
+    "hero": {
+      "title": "The easiest way to run your bakery",
+      "subtitle": "Bakery System brings your staff, inventory, sales, and production together in one place — fast and simple. Now powered by AI, too.",
+      "ctaLogin": "Log in",
+      "ctaSignup": "Create a company"
+    },
+    "about": {
+      "title": "What is Bakery System?",
+      "p1": "Bakery System is a management system built specifically for small and mid-sized bakeries and pastry shops. It connects your whole team — owner, manager, baker, cashier, and driver — in one simple app.",
+      "p2": "Many bakeries still run on notebooks, spreadsheets, or a handful of disconnected apps — which leads to mistakes, lost data, and wasted time. Bakery System solves that: schedules, inventory, sales, and reports all live in one place and update in real time.",
+      "p3": "The system now also includes AI-powered demand forecasting and pricing recommendations, so you can plan not just for today, but for tomorrow too."
+    },
+    "features": {
+      "title": "Features",
+      "subtitle": "Everything your bakery needs, in one app",
+      "schedule": {
+        "title": "Work schedule",
+        "desc": "Plan staff shifts — everyone sees their own shift in the app."
+      },
+      "voice": {
+        "title": "Voice input",
+        "desc": "Log sales and production just by speaking, even with your hands full."
+      },
+      "inventory": {
+        "title": "Inventory control",
+        "desc": "Track ingredient stock in real time and get alerts when it's running low."
+      },
+      "roles": {
+        "title": "Multi-branch & roles",
+        "desc": "Owner, manager, baker, cashier, driver — everyone sees only what's relevant to them."
+      },
+      "reports": {
+        "title": "Reports",
+        "desc": "See daily and monthly sales, profit, and production stats at a glance."
+      },
+      "ai": {
+        "title": "AI assistant",
+        "desc": "Tomorrow's demand forecast and price recommendations when ingredient costs change — powered by AI."
+      }
+    },
+    "howItWorks": {
+      "title": "How it works",
+      "step1": {
+        "title": "Sign up",
+        "desc": "Create your company in a couple of minutes — no credit card needed."
+      },
+      "step2": {
+        "title": "Add your team",
+        "desc": "Invite your manager, bakers, cashiers, and drivers — they log in from their own phone."
+      },
+      "step3": {
+        "title": "Get to work",
+        "desc": "Assign a shift, log a sale — the system tracks the rest for you."
+      }
+    },
+    "aboutUs": {
+      "title": "About us",
+      "text": "Bakery System is a local project built to digitize bakeries and pastry shops across Uzbekistan. Our goal is to give small business owners a modern management tool that speaks their language.",
+      "contactTitle": "Contact",
+      "emailLabel": "Email",
+      "phoneLabel": "Phone",
+      "telegramLabel": "Telegram"
+    },
+    "footer": {
+      "copyright": "© 2026 Bakery System. All rights reserved.",
+      "loginLink": "Log in",
+      "signupLink": "Sign up",
+      "employeeLink": "I'm an employee"
+    }
   }
 }

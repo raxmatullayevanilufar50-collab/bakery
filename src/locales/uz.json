@@ -12,9 +12,11 @@
     "unknownEmployee": "Noma'lum xodim",
     "unknown": "Noma'lum",
     "genericError": "Xatolik yuz berdi",
-    "brand": "Bakery",
+    "brand": "Bakery System",
     "brandTagline": "Nonvoyxona",
-    "currency": "so'm"
+    "currency": "so'm",
+    "confirm": "Tasdiqlash",
+    "cancel": "Bekor qilish"
   },
   "roles": {
     "owner": "Egasi",
@@ -38,13 +40,6 @@
   },
   "languageSwitcher": {
     "label": "Til"
-  },
-  "landing": {
-    "subtitle": "Nonvoyxona boshqaruv dasturi",
-    "welcome": "Xush kelibsiz! 👋",
-    "createCompany": "✨ Kompaniya ochish",
-    "ownerLogin": "🔑 Egasi / Boshqaruvchi sifatida kirish",
-    "employeeLogin": "📱 Xodim sifatida kirish"
   },
   "ownerSignup": {
     "title": "Kompaniya ochish",
@@ -136,7 +131,8 @@
     "operations": "Amaliyot",
     "finance": "Moliya",
     "security": "Xavfsizlik",
-    "main": "Asosiy"
+    "main": "Asosiy",
+    "ai": "AI yordamchi"
   },
   "nav": {
     "employees": "Xodimlar",
@@ -151,7 +147,10 @@
     "kassa": "Kassa",
     "productionLog": "Ishlab chiqarish qaydi",
     "voiceSale": "Ovozli savdo",
-    "sales": "Savdo"
+    "sales": "Savdo",
+    "forecast": "Bashorat",
+    "pricing": "Narx tavsiyalari",
+    "display": "Vitrina"
   },
   "sales": {
     "todayTotal": "Bugungi jami savdo",
@@ -172,8 +171,8 @@
   },
   "voiceSale": {
     "title": "Ovozli savdo kiritish",
-    "example": "Masalan: \"besh dona Buxanka sotdi Aziz'ga 15000 so'mga\"",
-    "invalidDraft": "Mahsulot, miqdor va narxni to'g'ri kiriting",
+    "example": "Masalan: \"besh dona Buxanka sotdi Aziz'ga 15000 so'mga\" yoki \"3 ta somsa, 2 ta non sotildi\"",
+    "invalidDraft": "Har bir qatorda mahsulot, miqdor va narxni to'g'ri kiriting",
     "confirmTitle": "Tasdiqlaysizmi?",
     "selectProduct": "Mahsulotni tanlang",
     "quantity": "Miqdor",
@@ -181,17 +180,21 @@
     "customerName": "Mijoz nomi (ixtiyoriy)",
     "saved": "Savdo qayd etildi",
     "yes": "Ha, saqlash",
-    "no": "Yo'q, bekor qilish"
+    "no": "Yo'q, bekor qilish",
+    "analyzing": "AI tahlil qilmoqda...",
+    "addRow": "Yana mahsulot qo'shish"
   },
   "productionLog": {
     "title": "Ishlab chiqarish qaydi",
-    "example": "Masalan: \"yigirma dona Buxanka pishirdim\"",
-    "invalidDraft": "Mahsulot va miqdorni to'g'ri kiriting",
+    "example": "Masalan: \"yigirma dona Buxanka pishirdim\" yoki \"o'n dona somsa, besh dona non pishirdim\"",
+    "invalidDraft": "Har bir qatorda mahsulot va miqdorni to'g'ri kiriting",
     "confirmTitle": "Tasdiqlaysizmi?",
     "selectProduct": "Mahsulotni tanlang",
     "quantity": "Miqdor",
     "todayEntries": "Bugungi yozuvlarim",
-    "noEntries": "Hozircha yozuvlar yo'q"
+    "noEntries": "Hozircha yozuvlar yo'q",
+    "analyzing": "AI tahlil qilmoqda...",
+    "addRow": "Yana mahsulot qo'shish"
   },
   "employees": {
     "companyCode": "Kompaniya kodi",
@@ -243,7 +246,33 @@
     "lowStock": "Kam qoldi!",
     "lowStockBannerTitle": "Kam qolgan xom-ashyolar",
     "lowStockBannerCount": "{{count}} ta mahsulot kam qoldi, to'ldirish kerak",
-    "sortLowFirst": "Avval kam qolganlar"
+    "sortLowFirst": "Avval kam qolganlar",
+    "recipesTitle": "Retseptlar",
+    "recipesHint": "Har bir mahsulot uchun qaysi xomashyodan qancha ketishini belgilang — bu pishirish qaydi orqali omborni avtomatik yangilash va narx tavsiyalari uchun kerak.",
+    "selectProductForRecipe": "Mahsulotni tanlang",
+    "noRecipeYet": "Bu mahsulot uchun hali retsept kiritilmagan",
+    "selectIngredient": "Xomashyoni tanlang",
+    "quantityPerUnitPlaceholder": "1 dona uchun miqdor",
+    "unitCostPlaceholder": "Tannarx (so'm)"
+  },
+  "forecast": {
+    "title": "Ertangi kun uchun bashorat",
+    "subtitle": "Savdo tarixi asosida har bir mahsulotdan qancha tayyorlash kerakligi taklif qilinadi.",
+    "generate": "Bashorat yaratish",
+    "generating": "Yaratilmoqda...",
+    "empty": "Hali bashorat yaratilmagan",
+    "createTask": "Vazifa yaratish"
+  },
+  "pricing": {
+    "pendingTitle": "Kutilayotgan tavsiyalar",
+    "noPending": "Hozircha yangi narx tavsiyasi yo'q",
+    "explaining": "AI izoh yozmoqda...",
+    "accept": "Qabul qilish",
+    "reject": "Rad etish",
+    "costLine": "Tannarx: {{oldCost}} → {{newCost}} so'm · Marja: {{margin}}%",
+    "historyTitle": "Hal qilingan tavsiyalar",
+    "status_qabul_qilindi": "Qabul qilindi",
+    "status_rad_etildi": "Rad etildi"
   },
   "orders": {
     "newOrder": "Yangi buyurtma",
@@ -261,6 +290,16 @@
     "driverLabel": "Haydovchi: {{name}}"
   },
   "reports": {
+    "dailyTitle": "Kunlik hisobot",
+    "weeklyTitle": "Haftalik hisobot",
+    "date": "Sana",
+    "revenue": "Jami daromad",
+    "itemsSold": "Sotilgan mahsulotlar",
+    "average": "O'rtacha chek",
+    "transactions": "Tranzaksiyalar",
+    "byCategory": "Kategoriya bo'yicha savdo",
+    "hourly": "Soatlik savdo",
+    "weeklyTotal": "Haftalik jami",
     "todaySales": "Bugungi savdo (so'm)",
     "todayProduced": "Bugun tayyor mahsulot",
     "todayOrders": "Bugungi buyurtmalar",
@@ -304,7 +343,8 @@
     "noOrders": "Sizga hozircha buyurtma tayinlanmagan",
     "departed": "Yo'lga chiqdim",
     "delivered": "Yetkazdim",
-    "finished": "Yakunlangan"
+    "finished": "Yakunlangan",
+    "statusUpdated": "Holat yangilandi"
   },
   "cashier": {
     "title": "Kassa",
@@ -318,6 +358,11 @@
     "myTodaySales": "Bugungi savdolarim",
     "noSales": "Hozircha savdo yo'q"
   },
+  "pos": {"all":"Barchasi","search":"Qidirish","cart":"Savat","sell":"Sotish","clear":"Tozalash","preOrder":"Oldindan buyurtma","available":"Mavjud","soldOut":"Tugadi","weightInput":"Og'irlik","enterWeight":"Og'irlikni kiriting","cartEmpty":"Savat bo'sh","total":"Jami","saleSuccess":"Savdo qayd etildi"},
+  "categories": {"non":"Non","pishiriq":"Pishiriq","tort":"Tort","shirinlik":"Shirinlik","ichimlik":"Ichimlik","boshqa":"Boshqa"},
+  "preOrder": {"title":"Oldindan buyurtma","customerName":"Mijoz ismi","phone":"Telefon","pickupDate":"Olib ketish sanasi","pickupTime":"Olib ketish vaqti","notes":"Izohlar","submit":"Buyurtma yaratish","created":"Buyurtma yaratildi","status":{"label":"Holat","kutilmoqda":"Kutilmoqda","tayyor":"Tayyor","berildi":"Berildi","bekor":"Bekor"}},
+  "receipt": {"print":"Chop etish","share":"Ulashish"},
+  "products": {"uploadImage":"Rasm yuklash","imageError":"JPG, PNG yoki WebP, 2 MB gacha bo'lishi kerak"},
   "errors": {
     "notAuthenticated": "Avtorizatsiyadan o'tilmagan",
     "alreadyBelongToCompany": "Siz allaqachon bir kompaniyaga tegishlisiz",
@@ -340,6 +385,85 @@
     "companyCodeNotFound": "Kompaniya kodi topilmadi",
     "inviteNotLinked": "Bu taklif kodi profil bilan bog'lanmagan",
     "pinAlreadySet": "PIN allaqachon o'rnatilgan",
-    "pinNotSet": "PIN hali o'rnatilmagan"
+    "pinNotSet": "PIN hali o'rnatilmagan",
+    "ownerOnlyPriceApproval": "Faqat kompaniya egasi narxni tasdiqlashi mumkin",
+    "recommendationNotFound": "Tavsiya topilmadi yoki allaqachon hal qilingan",
+    "ownerOnlyPriceReject": "Faqat kompaniya egasi tavsiyani rad eta oladi",
+    "ownerManagerOnlyForecast": "Faqat egasi yoki menejer bashorat yarata oladi",
+    "productNotFound": "Mahsulot topilmadi"
+  },
+  "marketing": {
+    "nav": {
+      "login": "Kirish"
+    },
+    "hero": {
+      "title": "Nonvoyxonangizni boshqarishning eng oson yo'li",
+      "subtitle": "Bakery System — xodimlar, ombor, savdo va ishlab chiqarishni bir joyda, oson va tez boshqaring. Endi sun'iy intellekt yordamida ham.",
+      "ctaLogin": "Kirish",
+      "ctaSignup": "Kompaniya ochish"
+    },
+    "about": {
+      "title": "Bakery System nima?",
+      "p1": "Bakery System — kichik va o'rta nonvoyxonalar, qandolatxonalar va pekarniyalar uchun maxsus yaratilgan boshqaruv tizimi. U bitta oddiy ilovada butun jamoangizni — egasi, menejer, pisher, sotuvchi va haydovchini — bir-biriga bog'laydi.",
+      "p2": "Ko'pchilik nonvoyxonalar hali ham daftar, Excel jadvali yoki bir nechta bog'lanmagan ilovalar orqali ishlaydi — bu esa xatolar, yo'qolgan ma'lumot va vaqt isrofiga olib keladi. Bakery System shu muammoni hal qiladi: ish jadvali, ombor, savdo va hisobotlarning barchasi bitta joyda, real vaqtda yangilanib turadi.",
+      "p3": "Endi tizimga sun'iy intellekt asosida talab bashorati va narxlash tavsiyalari ham qo'shildi — shunda siz nafaqat bugungi ishni, balki ertangi kunni ham oldindan rejalashtira olasiz."
+    },
+    "features": {
+      "title": "Imkoniyatlar",
+      "subtitle": "Nonvoyxonangiz uchun kerakli hamma narsa, bitta ilovada",
+      "schedule": {
+        "title": "Ish jadvali",
+        "desc": "Xodimlar smenasini rejalashtiring — har kim o'z navbatini ilovada ko'radi."
+      },
+      "voice": {
+        "title": "Ovozli kiritish",
+        "desc": "Savdo va ishlab chiqarishni qo'l band bo'lganda ham — shunchaki gapirib qayd eting."
+      },
+      "inventory": {
+        "title": "Ombor nazorati",
+        "desc": "Xomashyo qoldig'ini real vaqtda kuzating, kam qolganda avtomatik ogohlantirish oling."
+      },
+      "roles": {
+        "title": "Ko'p filial va rol boshqaruvi",
+        "desc": "Egasi, menejer, pisher, sotuvchi, haydovchi — har biri faqat o'ziga kerakli ma'lumotni ko'radi."
+      },
+      "reports": {
+        "title": "Hisobotlar",
+        "desc": "Kunlik va oylik savdo, foyda va ishlab chiqarish statistikasini bir qarashda ko'ring."
+      },
+      "ai": {
+        "title": "AI yordamchi",
+        "desc": "Ertangi kun uchun talab bashorati va xomashyo narxi o'zgarganda narx tavsiyasi — sun'iy intellekt yordamida."
+      }
+    },
+    "howItWorks": {
+      "title": "Qanday ishlaydi",
+      "step1": {
+        "title": "Ro'yxatdan o'ting",
+        "desc": "Bir necha daqiqada kompaniyangizni yarating — kredit karta shart emas."
+      },
+      "step2": {
+        "title": "Xodimlarni qo'shing",
+        "desc": "Menejer, pisher, sotuvchi va haydovchilarni taklif qiling — ular o'z telefonidan kiradi."
+      },
+      "step3": {
+        "title": "Ishni boshlang",
+        "desc": "Smenani belgilang, savdoni qayd eting — tizim qolganini o'zi kuzatib boradi."
+      }
+    },
+    "aboutUs": {
+      "title": "Biz haqimizda",
+      "text": "Bakery System — O'zbekistondagi nonvoyxona va pekarniyalarni raqamlashtirish uchun yaratilgan mahalliy loyiha. Maqsadimiz — kichik biznes egalariga zamonaviy, tushunarli va o'z tilida gaplashadigan boshqaruv vositasini taqdim etish.",
+      "contactTitle": "Aloqa",
+      "emailLabel": "Email",
+      "phoneLabel": "Telefon",
+      "telegramLabel": "Telegram"
+    },
+    "footer": {
+      "copyright": "© 2026 Bakery System. Barcha huquqlar himoyalangan.",
+      "loginLink": "Kirish",
+      "signupLink": "Ro'yxatdan o'tish",
+      "employeeLink": "Men xodimman"
+    }
   }
 }

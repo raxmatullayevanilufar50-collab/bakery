@@ -4,12 +4,14 @@ import DashboardShell from '../../components/DashboardShell'
 import StatusBadge from '../../components/StatusBadge'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../context/AuthContext'
+import { useToast } from '../../components/ui/Toast'
 
 const ACTIVE_STATUSES = ['yangi', 'tayyorlanmoqda', 'yolda']
 
 export default function DriverDashboard() {
   const { t } = useTranslation()
   const { profile } = useAuth()
+  const toast = useToast()
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -41,7 +43,13 @@ export default function DriverDashboard() {
   }, [load, profile.id])
 
   async function setStatus(orderId, status) {
-    await supabase.rpc('update_order_status', { p_order_id: orderId, p_status: status })
+    const previous = orders
+    setOrders((items) => items.map((order) => order.id === orderId ? { ...order, status } : order))
+    const { error } = await supabase.rpc('update_order_status', { p_order_id: orderId, p_status: status })
+    if (error) {
+      setOrders(previous)
+      toast.error(error.message)
+    } else toast.success(t('driver.statusUpdated'))
   }
 
   const active = orders.filter((o) => ACTIVE_STATUSES.includes(o.status))
@@ -49,7 +57,7 @@ export default function DriverDashboard() {
 
   return (
     <DashboardShell
-      navGroups={[{ title: t('navGroups.main'), items: [{ key: 'deliveries', label: t('nav.myDeliveries'), icon: '🚚' }] }]}
+      navGroups={[{ title: t('navGroups.main'), items: [{ key: 'deliveries', label: t('nav.myDeliveries'), icon: 'truck' }] }]}
       active="deliveries"
       onNavigate={() => {}}
       title={t('driver.title')}

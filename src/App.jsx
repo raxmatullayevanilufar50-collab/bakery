@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { lazy, Suspense, useState } from 'react'
 import { Routes, Route, Navigate, Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from './context/AuthContext'
+import Skeleton from './components/ui/Skeleton'
 import LanguageSwitcher from './components/LanguageSwitcher'
 import Landing from './pages/auth/Landing'
 import OwnerSignup from './pages/auth/OwnerSignup'
@@ -11,11 +12,11 @@ import ResetPassword from './pages/auth/ResetPassword'
 import EmployeeJoin from './pages/auth/EmployeeJoin'
 import PinSetup from './pages/auth/PinSetup'
 import PinUnlock from './pages/auth/PinUnlock'
-import OwnerDashboard from './pages/owner/OwnerDashboard'
-import ManagerDashboard from './pages/manager/ManagerDashboard'
-import BakerDashboard from './pages/baker/BakerDashboard'
-import DriverDashboard from './pages/driver/DriverDashboard'
-import CashierDashboard from './pages/cashier/CashierDashboard'
+const OwnerDashboard = lazy(() => import('./pages/owner/OwnerDashboard'))
+const ManagerDashboard = lazy(() => import('./pages/manager/ManagerDashboard'))
+const BakerDashboard = lazy(() => import('./pages/baker/BakerDashboard'))
+const DriverDashboard = lazy(() => import('./pages/driver/DriverDashboard'))
+const CashierDashboard = lazy(() => import('./pages/cashier/CashierDashboard'))
 
 const ROLE_DASHBOARDS = {
   owner: OwnerDashboard,
@@ -29,7 +30,7 @@ function LoadingScreen() {
   const { t } = useTranslation()
   return (
     <div className="min-h-screen flex items-center justify-center bg-cream">
-      <p className="text-ink-muted font-semibold">{t('common.loading')}</p>
+      <div className="w-64"><Skeleton variant="text" /><Skeleton variant="text" className="mt-3" /><p className="sr-only">{t('common.loading')}</p></div>
     </div>
   )
 }
@@ -60,7 +61,7 @@ function Root() {
 
   const Dashboard = ROLE_DASHBOARDS[profile.role]
   if (!Dashboard) return <LoadingScreen />
-  return <Dashboard />
+  return <Suspense fallback={<LoadingScreen />}><Dashboard /></Suspense>
 }
 
 // Sessiya bor, lekin hali profil yo'q — masalan, email tasdiqlash

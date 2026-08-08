@@ -7,22 +7,34 @@ import { translateError } from '../lib/errors'
 import { localeTag } from '../lib/i18n'
 import VoiceRecorder from '../components/VoiceRecorder'
 
+const EMPTY_ROW = { productId: '', quantity: '' }
+
 function startOfDay() {
   const d = new Date()
   d.setHours(0, 0, 0, 0)
   return d
 }
 
+// Ko'p punktli gapni ("o'n dona somsa, besh dona non pishirdim")
+// aniqlash uchun oddiy signal — feature parity SalesTab bilan bir xil.
+function looksMultiItem(transcript) {
+  return /,| va /.test(transcript.toLowerCase())
+}
+
 // Baker uchun asosiy sahifa: kun davomida necha dona nima pishirganini
-// ovoz yoki matn orqali erkin qayd qiladi. Xodim ID'si va sana avtomatik —
-// qo'lda kiritilmaydi. Har bir yozuv alohida qator, ustiga yozilmaydi.
+// ovoz yoki matn orqali erkin qayd qiladi. Har bir tasdiqlangan qator
+// production_logs'ga yoziladi — serverdagi trigger
+// (apply_production_log_inventory_impact, 20260729090100) retsept
+// bo'yicha xomashyoni avtomatik kamaytiradi.
 export default function ProductionLogTab() {
   const { t, i18n } = useTranslation()
   const { profile } = useAuth()
   const [products, setProducts] = useState([])
   const [todayLogs, setTodayLogs] = useState([])
   const [loading, setLoading] = useState(true)
-  const [draft, setDraft] = useState(null)
+  const [draftItems, setDraftItems] = useState(null)
+  const [aiTranscript, setAiTranscript] = useState('')
+  const [parsing, setParsing] = useState(false)
   const [error, setError] = useState('')
   const [saving, setSaving] = useState(false)
 
@@ -46,39 +58,95 @@ export default function ProductionLogTab() {
     load()
   }, [load])
 
-  function handleTranscript(transcript) {
-    setError('')
+  useEffect(() => {
+    const channel = supabase
+      .channel('production-log-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'production_logs' }, load)
+      .subscribe()
+    return () => supabase.removeChannel(channel)
+  }, [load])
+
+  function rowFromLocalParse(transcript) {
     const parsed = parseProductionUtterance(transcript, products)
-    setDraft({
-      productId: parsed.productId,
-      quantity: parsed.quantity ? String(parsed.quantity) : '',
-    })
+    return { productId: parsed.productId, quantity: parsed.quantity ? String(parsed.quantity) : '' }
   }
 
-  function updateDraft(field) {
-    return (e) => setDraft((d) => ({ ...d, [field]: e.target.value }))
+  async function handleTranscript(transcript) {
+    setError('')
+    const local = rowFromLocalParse(transcript)
+
+    if (!looksMultiItem(transcript) && local.productId) {
+      setDraftItems([local])
+      setAiTranscript('')
+      return
+    }
+
+    setParsing(true)
+    const { data, error: invokeError } = await supabase.functions.invoke('parse-voice-command', {
+      body: { transcript },
+    })
+    setParsing(false)
+
+    if (!invokeError && data?.items?.length > 0) {
+      setDraftItems(data.items.map((item) => ({ productId: item.productId, quantity: String(item.quantity) })))
+      setAiTranscript(transcript)
+      return
+    }
+
+    setDraftItems([local.productId ? local : { ...EMPTY_ROW }])
+    setAiTranscript('')
+  }
+
+  function updateRow(index, field) {
+    return (e) => {
+      const value = e.target.value
+      setDraftItems((rows) => rows.map((r, i) => (i === index ? { ...r, [field]: value } : r)))
+    }
+  }
+
+  function addRow() {
+    setDraftItems((rows) => [...rows, { ...EMPTY_ROW }])
+  }
+
+  function removeRow(index) {
+    setDraftItems((rows) => rows.filter((_, i) => i !== index))
   }
 
   async function confirmDraft() {
     setError('')
-    const quantity = Number(draft.quantity)
-    if (!draft.productId || !quantity || quantity <= 0) {
+    const rows = draftItems.map((r) => ({ productId: r.productId, quantity: Number(r.quantity) }))
+    const invalid = rows.some((r) => !r.productId || !r.quantity || r.quantity <= 0)
+    if (rows.length === 0 || invalid) {
       setError(t('productionLog.invalidDraft'))
       return
     }
+
     setSaving(true)
-    const { error: insertError } = await supabase.from('production_logs').insert({
-      company_id: profile.company_id,
-      profile_id: profile.id,
-      product_id: draft.productId,
-      quantity,
-    })
+    const { error: insertError } = await supabase.from('production_logs').insert(
+      rows.map((r) => ({
+        company_id: profile.company_id,
+        profile_id: profile.id,
+        product_id: r.productId,
+        quantity: r.quantity,
+      }))
+    )
     setSaving(false)
     if (insertError) {
       setError(translateError(t, insertError))
       return
     }
-    setDraft(null)
+
+    if (aiTranscript) {
+      supabase.rpc('log_ai_voice_command', {
+        p_transcript: aiTranscript,
+        p_parsed: rows,
+        p_model: 'claude-haiku-4-5',
+        p_target_table: 'production_logs',
+      })
+    }
+
+    setDraftItems(null)
+    setAiTranscript('')
     load()
   }
 
@@ -88,29 +156,48 @@ export default function ProductionLogTab() {
         <h2 className="font-extrabold text-brown-dark mb-2">{t('productionLog.title')}</h2>
         <p className="text-xs text-ink-muted text-center max-w-xs mb-2">{t('productionLog.example')}</p>
         <VoiceRecorder onTranscript={handleTranscript} />
+        {parsing && <p className="text-sm text-ink-muted font-semibold">{t('productionLog.analyzing')}</p>}
       </div>
 
-      {draft && (
+      {draftItems && (
         <div className="card p-4 flex flex-col gap-3">
           <h3 className="font-extrabold text-brown-dark">{t('productionLog.confirmTitle')}</h3>
-          <select className="input" value={draft.productId} onChange={updateDraft('productId')}>
-            <option value="">{t('productionLog.selectProduct')}</option>
-            {products.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.name}
-              </option>
-            ))}
-          </select>
-          <input
-            className="input"
-            type="number"
-            placeholder={t('productionLog.quantity')}
-            value={draft.quantity}
-            onChange={updateDraft('quantity')}
-          />
+
+          {draftItems.map((row, index) => (
+            <div
+              key={index}
+              className="flex flex-wrap items-center gap-2 border-b border-brown/10 pb-3 last:border-0 last:pb-0"
+            >
+              <select className="input flex-1 min-w-[140px]" value={row.productId} onChange={updateRow(index, 'productId')}>
+                <option value="">{t('productionLog.selectProduct')}</option>
+                {products.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.name}
+                  </option>
+                ))}
+              </select>
+              <input
+                className="input w-24"
+                type="number"
+                placeholder={t('productionLog.quantity')}
+                value={row.quantity}
+                onChange={updateRow(index, 'quantity')}
+              />
+              {draftItems.length > 1 && (
+                <button type="button" onClick={() => removeRow(index)} className="text-bad text-sm font-bold underline">
+                  {t('common.remove')}
+                </button>
+              )}
+            </div>
+          ))}
+
+          <button type="button" onClick={addRow} className="text-sm text-orange font-bold underline self-start">
+            + {t('productionLog.addRow')}
+          </button>
+
           {error && <p className="text-sm text-bad font-semibold">{error}</p>}
           <div className="flex gap-2">
-            <button type="button" onClick={() => setDraft(null)} className="btn-secondary flex-1">
+            <button type="button" onClick={() => setDraftItems(null)} className="btn-secondary flex-1">
               {t('voiceSale.no')}
             </button>
             <button type="button" onClick={confirmDraft} disabled={saving} className="btn-primary flex-1">

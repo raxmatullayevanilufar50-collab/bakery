@@ -2,6 +2,8 @@ import { useEffect, useState, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { localeTag } from '../lib/i18n'
+import DailyReport from '../components/reports/DailyReport'
+import WeeklyReport from '../components/reports/WeeklyReport'
 
 const HISTORY_LIMIT = 500
 
@@ -71,6 +73,8 @@ export default function ReportsTab() {
 
   return (
     <div className="flex flex-col gap-6">
+      <DailyReport />
+      <WeeklyReport />
       <div className="grid grid-cols-3 gap-3">
         <div className="card p-5 text-center">
           <div className="text-2xl mb-1">💰</div>

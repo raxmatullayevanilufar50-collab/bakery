@@ -4,11 +4,13 @@ import DashboardShell from '../../components/DashboardShell'
 import ProductionLogTab from '../../features/ProductionLogTab'
 import MyTasksTab from '../../features/MyTasksTab'
 import SalesTab from '../../features/SalesTab'
+import DisplayInventory from '../../components/inventory/DisplayInventory'
 
 const PANELS = {
   productionLog: ProductionLogTab,
   tasks: MyTasksTab,
   sales: SalesTab,
+  display: DisplayInventory,
 }
 
 export default function BakerDashboard() {
@@ -20,9 +22,10 @@ export default function BakerDashboard() {
     {
       title: t('navGroups.main'),
       items: [
-        { key: 'productionLog', label: t('nav.productionLog'), icon: '📝' },
-        { key: 'tasks', label: t('nav.myTasks'), icon: '🥖' },
-        { key: 'sales', label: t('nav.sales'), icon: '💰' },
+        { key: 'productionLog', label: t('nav.productionLog'), icon: 'clipboard' },
+        { key: 'tasks', label: t('nav.myTasks'), icon: 'bread' },
+        { key: 'sales', label: t('nav.sales'), icon: 'cash' },
+        { key: 'display', label: t('nav.display'), icon: 'bread' },
       ],
     },
   ]
@@ -31,6 +34,7 @@ export default function BakerDashboard() {
     productionLog: t('productionLog.title'),
     tasks: t('baker.title'),
     sales: t('nav.sales'),
+    display: t('nav.display'),
   }
 
   return (
