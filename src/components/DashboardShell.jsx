@@ -101,7 +101,13 @@ export default function DashboardShell({ navGroups, active, onNavigate, title, c
         </div>
       </aside>
 
-      <div className="flex-1 md:ml-[260px] min-h-screen flex flex-col">
+      {/* min-w-0: flex item'ning standart `min-width: auto` qiymati uni eng
+          keng ichki kontent bo'yicha cho'zadi, natijada telefonda butun
+          sahifa yon tomonga siljib ketardi (375px ekranda 659px kontent).
+          Nolga tushirilgach ustun ekran kengligida qoladi va ichkaridagi
+          `overflow-x-auto` bloklar (kategoriya tasmasi, jadvallar) o'zi
+          siljiydi — kerak bo'lgani aynan shu. */}
+      <div className="flex-1 min-w-0 md:ml-[260px] min-h-screen flex flex-col">
         <div className="md:hidden flex items-center justify-between bg-surface px-4 h-14 border-b border-brown/10 sticky top-0 z-50 gap-2">
           <button type="button" onClick={() => setSidebarOpen(true)} className="text-xl text-brown-dark shrink-0">
             ☰
