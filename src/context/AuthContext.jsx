@@ -1,7 +1,8 @@
-import { createContext, useContext, useEffect, useState, useCallback } from 'react'
+import { createContext, useContext, useEffect, useState, useCallback, useRef } from 'react'
 import { supabase } from '../lib/supabase'
 import { getDeviceKey, getDeviceLabel } from '../lib/device'
 import { setLanguage } from '../lib/i18n'
+import { readPinSession, writePinSession, clearPinSession } from '../lib/pinSession'
 
 const AuthContext = createContext(null)
 
@@ -13,9 +14,20 @@ export function AuthProvider({ children }) {
   // profile === null bilan "hali tekshirilmagan" holatini ajratish uchun.
   const [profileChecked, setProfileChecked] = useState(false)
   const [loading, setLoading] = useState(true)
-  // PIN bilan ochilgan-ochilmaganligi — xotirada saqlanadi, sahifa
-  // yangilanganda yoki qurilma almashtirilganda qayta so'raladi.
-  const [unlocked, setUnlocked] = useState(false)
+  // PIN bilan ochilgan-ochilmaganligi. localStorage'da saqlanadi
+  // (src/lib/pinSession.js) — sahifa yangilanganda yoki ilova qayta
+  // ochilganda PIN qayta so'ralmaydi, faqat 8 soat faoliyatsizlikdan
+  // keyin yoki xodim o'zi chiqqanda.
+  const [unlocked, setUnlockedState] = useState(false)
+  // setUnlocked ichida joriy foydalanuvchini o'qish uchun — session
+  // state'iga bog'lansa, PinUnlock eski closure'ni ushlab qolishi mumkin.
+  const userIdRef = useRef(null)
+
+  const setUnlocked = useCallback((value) => {
+    setUnlockedState(value)
+    if (value) writePinSession(userIdRef.current)
+    else clearPinSession()
+  }, [])
 
   const loadProfile = useCallback(async (userId) => {
     if (!userId) {
@@ -65,18 +77,31 @@ export function AuthProvider({ children }) {
       if (!active) return
       setSession(data.session)
       if (data.session) {
+        // Saqlangan PIN sessiyasi hali kuchdami — sahifa yangilanganda
+        // shu yerda tiklanadi, aks holda PinUnlock ekrani chiqadi.
+        userIdRef.current = data.session.user.id
+        setUnlockedState(readPinSession(data.session.user.id))
         await loadProfile(data.session.user.id)
       }
       setLoading(false)
     }
     init()
 
+    // Bu hodisa faqat kirish/chiqishda emas, token yangilanganda ham
+    // ishlaydi (Supabase taxminan har soatda TOKEN_REFRESHED yuboradi).
+    // Shuning uchun bu yerda qulfni so'zsiz yopib bo'lmaydi — aks holda
+    // kassir har soatda PIN kiritishga majbur bo'lardi. Buning o'rniga
+    // saqlangan sessiya qayta o'qiladi.
     const { data: listener } = supabase.auth.onAuthStateChange(async (_event, newSession) => {
       setSession(newSession)
-      setUnlocked(false)
       if (newSession) {
+        userIdRef.current = newSession.user.id
+        setUnlockedState(readPinSession(newSession.user.id))
         await loadProfile(newSession.user.id)
       } else {
+        userIdRef.current = null
+        setUnlockedState(false)
+        clearPinSession()
         setProfile(null)
         setCompany(null)
       }
@@ -112,9 +137,53 @@ export function AuthProvider({ children }) {
     }
   }, [session])
 
+  // PIN sessiyasini xodim ishlayotgan vaqtda uzaytirib boradi va muddati
+  // tugaganda qulflaydi. Muddat aynan FAOLLIKDAN hisoblanishi uchun
+  // uzaytirish faqat haqiqiy harakat (bosish/yozish) bo'lganda bajariladi —
+  // ochiq qolgan, lekin tegilmayotgan planshet 8 soatdan keyin qulflanadi.
+  useEffect(() => {
+    if (!unlocked || !session) return
+    const userId = session.user.id
+    let activeSinceLastTouch = false
+
+    const markActive = () => {
+      activeSinceLastTouch = true
+    }
+
+    const check = () => {
+      if (!readPinSession(userId)) {
+        setUnlockedState(false)
+        return
+      }
+      if (activeSinceLastTouch) {
+        writePinSession(userId)
+        activeSinceLastTouch = false
+      }
+    }
+
+    // Ilova fonga o'tib qaytganda muddat darhol tekshirilsin — kassir
+    // telefonni cho'ntagiga solib, ertasi kuni ochishi mumkin.
+    const onVisibility = () => {
+      if (document.visibilityState === 'visible') check()
+    }
+
+    document.addEventListener('pointerdown', markActive)
+    document.addEventListener('keydown', markActive)
+    document.addEventListener('visibilitychange', onVisibility)
+    const interval = window.setInterval(check, 60 * 1000)
+
+    return () => {
+      document.removeEventListener('pointerdown', markActive)
+      document.removeEventListener('keydown', markActive)
+      document.removeEventListener('visibilitychange', onVisibility)
+      window.clearInterval(interval)
+    }
+  }, [unlocked, session])
+
   const signOut = useCallback(async () => {
+    clearPinSession()
     await supabase.auth.signOut()
-    setUnlocked(false)
+    setUnlockedState(false)
   }, [])
 
   const refreshProfile = useCallback(() => {
