@@ -254,7 +254,9 @@
     "noRecipeYet": "No recipe set for this product yet",
     "selectIngredient": "Select an ingredient",
     "quantityPerUnitPlaceholder": "Amount per unit",
-    "unitCostPlaceholder": "Cost (UZS)"
+    "unitCostPlaceholder": "Cost (UZS)",
+    "missingRecipeTitle": "Products without a recipe: {{count}}",
+    "missingRecipeHint": "Baking these does not draw down any raw materials. Pick a product below and enter its recipe."
   },
   "forecast": {
     "title": "Tomorrow's forecast",

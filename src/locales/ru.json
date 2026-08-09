@@ -254,7 +254,9 @@
     "noRecipeYet": "Для этого товара рецепт ещё не задан",
     "selectIngredient": "Выберите сырьё",
     "quantityPerUnitPlaceholder": "Количество на 1 шт.",
-    "unitCostPlaceholder": "Себестоимость (сум)"
+    "unitCostPlaceholder": "Себестоимость (сум)",
+    "missingRecipeTitle": "Товаров без рецепта: {{count}}",
+    "missingRecipeHint": "При выпечке этих товаров сырьё со склада не списывается. Выберите товар ниже и укажите рецепт."
   },
   "forecast": {
     "title": "Прогноз на завтра",

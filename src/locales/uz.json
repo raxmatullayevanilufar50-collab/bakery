@@ -254,7 +254,9 @@
     "noRecipeYet": "Bu mahsulot uchun hali retsept kiritilmagan",
     "selectIngredient": "Xomashyoni tanlang",
     "quantityPerUnitPlaceholder": "1 dona uchun miqdor",
-    "unitCostPlaceholder": "Tannarx (so'm)"
+    "unitCostPlaceholder": "Tannarx (so'm)",
+    "missingRecipeTitle": "Retsepti yo'q mahsulotlar: {{count}} ta",
+    "missingRecipeHint": "Bu mahsulotlar pishirilganda xomashyo omborlardan kamaymaydi. Pastdan mahsulotni tanlab, retseptini kiriting."
   },
   "forecast": {
     "title": "Ertangi kun uchun bashorat",

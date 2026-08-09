@@ -18,6 +18,9 @@ export default function InventoryTab() {
   const [recipeRows, setRecipeRows] = useState([])
   const [recipeForm, setRecipeForm] = useState({ inventoryItemId: '', quantityPerUnit: '' })
   const [recipeError, setRecipeError] = useState('')
+  // Retsepti bor mahsulotlar — retseptsizlari uchun xomashyo umuman
+  // kamaymaydi, shuning uchun ularni ogohlantirish sifatida ko'rsatamiz.
+  const [productIdsWithRecipe, setProductIdsWithRecipe] = useState(new Set())
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -31,8 +34,12 @@ export default function InventoryTab() {
   }, [t])
 
   const loadProducts = useCallback(async () => {
-    const { data } = await supabase.from('products').select('id, name, unit').order('name')
+    const [{ data }, { data: recipeProductRows }] = await Promise.all([
+      supabase.from('products').select('id, name, unit').order('name'),
+      supabase.from('product_ingredients').select('product_id'),
+    ])
     setProducts(data || [])
+    setProductIdsWithRecipe(new Set((recipeProductRows || []).map((row) => row.product_id)))
   }, [])
 
   const loadRecipe = useCallback(async (productId) => {
@@ -78,11 +85,13 @@ export default function InventoryTab() {
     if (insertError) setRecipeError(translateError(t, insertError))
     else setRecipeForm({ inventoryItemId: '', quantityPerUnit: '' })
     loadRecipe(selectedProductId)
+    loadProducts()
   }
 
   async function removeRecipeRow(id) {
     await supabase.from('product_ingredients').delete().eq('id', id)
     loadRecipe(selectedProductId)
+    loadProducts()
   }
 
   async function createItem(e) {
@@ -140,6 +149,11 @@ export default function InventoryTab() {
   const lowItems = useMemo(
     () => items.filter((item) => Number(item.quantity) <= Number(item.low_stock_threshold)),
     [items]
+  )
+
+  const productsWithoutRecipe = useMemo(
+    () => products.filter((p) => !productIdsWithRecipe.has(p.id)),
+    [products, productIdsWithRecipe]
   )
 
   const sortedItems = useMemo(() => {
@@ -246,6 +260,18 @@ export default function InventoryTab() {
           <h2 className="font-extrabold text-brown-dark">{t('inventory.recipesTitle')}</h2>
           <p className="text-xs text-ink-muted font-semibold mt-1">{t('inventory.recipesHint')}</p>
         </div>
+
+        {productsWithoutRecipe.length > 0 && (
+          <div className="bg-bad/10 border border-bad/30 rounded-[var(--radius-card)] p-3 flex flex-col gap-1">
+            <p className="text-bad font-extrabold text-sm">
+              ⚠️ {t('inventory.missingRecipeTitle', { count: productsWithoutRecipe.length })}
+            </p>
+            <p className="text-sm text-brown-dark font-semibold">
+              {productsWithoutRecipe.map((p) => p.name).join(', ')}
+            </p>
+            <p className="text-xs text-ink-muted font-semibold">{t('inventory.missingRecipeHint')}</p>
+          </div>
+        )}
         <select
           className="input"
           value={selectedProductId}
