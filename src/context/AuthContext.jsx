@@ -3,6 +3,7 @@ import { supabase } from '../lib/supabase'
 import { getDeviceKey, getDeviceLabel } from '../lib/device'
 import { setLanguage } from '../lib/i18n'
 import { readPinSession, writePinSession, clearPinSession } from '../lib/pinSession'
+import { setDemoActive, DEMO_EMAIL, DEMO_PASSWORD } from '../lib/demoMode'
 
 const AuthContext = createContext(null)
 
@@ -59,12 +60,17 @@ export function AuthProvider({ children }) {
     if (data?.company_id) {
       const { data: companyRow } = await supabase
         .from('companies')
-        .select('id, name, address')
+        .select('id, name, address, is_demo')
         .eq('id', data.company_id)
         .maybeSingle()
       setCompany(companyRow || null)
+      // Demo bayrog'ini React'dan tashqarida ham o'qish mumkin bo'lishi
+      // kerak — supabase klientidagi yozish qo'riqchisi har bir so'rov
+      // oldidan shuni tekshiradi.
+      setDemoActive(companyRow?.is_demo)
     } else {
       setCompany(null)
+      setDemoActive(false)
     }
     return data
   }, [])
@@ -115,8 +121,12 @@ export function AuthProvider({ children }) {
 
   // Sessiya paydo bo'lganda joriy qurilmani ro'yxatga oladi va
   // bloklanmaganini tekshiradi (4-bo'lim, 5 va 6-talab).
+  // Demo rejimida qurilma ro'yxatga olinmaydi: portfolio havolasini
+  // ochgan har bir mehmon uchun `devices` jadvaliga qator qo'shilishi
+  // ma'nosiz (va u cheksiz o'sardi). check_device qurilma topilmasa
+  // `true` qaytaradi, ya'ni bu o'tkazib yuborish hech narsani buzmaydi.
   useEffect(() => {
-    if (!session) return
+    if (!session || company?.is_demo) return
     let cancelled = false
 
     async function checkThisDevice() {
@@ -135,7 +145,7 @@ export function AuthProvider({ children }) {
     return () => {
       cancelled = true
     }
-  }, [session])
+  }, [session, company?.is_demo])
 
   // PIN sessiyasini xodim ishlayotgan vaqtda uzaytirib boradi va muddati
   // tugaganda qulflaydi. Muddat aynan FAOLLIKDAN hisoblanishi uchun
@@ -182,8 +192,21 @@ export function AuthProvider({ children }) {
 
   const signOut = useCallback(async () => {
     clearPinSession()
+    setDemoActive(false)
     await supabase.auth.signOut()
     setUnlockedState(false)
+  }, [])
+
+  // Kodsiz demo kirish. Oddiy parol bilan kirish — Supabase sessiyasi
+  // haqiqiy, chunki barcha so'rovlar RLS orqali auth.uid() ga bog'langan.
+  // Demo hisobning cheklovi parolda emas, bazadagi yozish taqiqida.
+  const signInDemo = useCallback(async () => {
+    clearPinSession()
+    const { error } = await supabase.auth.signInWithPassword({
+      email: DEMO_EMAIL,
+      password: DEMO_PASSWORD,
+    })
+    return error
   }, [])
 
   const refreshProfile = useCallback(() => {
@@ -212,6 +235,8 @@ export function AuthProvider({ children }) {
     loading,
     unlocked,
     setUnlocked,
+    isDemo: Boolean(company?.is_demo),
+    signInDemo,
     signOut,
     refreshProfile,
     changeLanguage,

@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '../../lib/supabase'
 import AuthCard from '../../components/AuthCard'
+import DemoLoginButton from '../../components/DemoLoginButton'
 
 export default function OwnerLogin() {
   const { t } = useTranslation()
@@ -51,7 +52,15 @@ export default function OwnerLogin() {
           {loading ? t('ownerLogin.submitting') : t('ownerLogin.submit')}
         </button>
       </form>
-      <p className="text-sm text-center mt-3">
+
+      <div className="flex items-center gap-3 my-4">
+        <span className="h-px flex-1 bg-brown/15" />
+        <span className="text-xs font-bold text-ink-muted">{t('common.or')}</span>
+        <span className="h-px flex-1 bg-brown/15" />
+      </div>
+      <DemoLoginButton />
+
+      <p className="text-sm text-center mt-4">
         <Link to="/parolni-tiklash" className="text-orange font-bold">
           {t('ownerLogin.forgotPassword')}
         </Link>

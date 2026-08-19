@@ -18,6 +18,15 @@
     "confirm": "Confirm",
     "cancel": "Cancel"
   },
+  "demo": {
+    "cta": "View the demo",
+    "ctaHint": "No code, no sign-up — with sample data",
+    "entering": "Signing in...",
+    "bannerTitle": "You are in demo mode",
+    "bannerSubtitle": "this is sample data, not real records",
+    "exit": "Exit",
+    "readOnlyError": "This is a demo. In the real app this feature works fully."
+  },
   "roles": {
     "owner": "Owner",
     "manager": "Manager",

@@ -32,6 +32,11 @@ const KNOWN_ERRORS = {
   'Mahsulot topilmadi': 'errors.productNotFound',
   'Faqat kassir yoki kompaniya egasi kunni yopa oladi': 'errors.ownerCashierOnlyCloseDay',
   "Kelajakdagi kunni yopib bo'lmaydi": 'errors.futureDateClose',
+  // Demo rejimidagi yozish urinishi — supabase klientidagi qo'riqchi
+  // (src/lib/supabase.js) va bazadagi trigger ikkalasi ham shu xabarni
+  // beradi, shuning uchun ikkala variant ham xaritalangan.
+  DEMO_READ_ONLY: 'demo.readOnlyError',
+  "Demo rejimida ma'lumotni o'zgartirib bo'lmaydi": 'demo.readOnlyError',
 }
 
 export function translateError(t, error) {

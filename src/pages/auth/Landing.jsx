@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import LanguageSwitcher from '../../components/LanguageSwitcher'
+import DemoLoginButton from '../../components/DemoLoginButton'
 
 const FEATURES = [
   { key: 'schedule', icon: '🗓️' },
@@ -63,6 +64,9 @@ export default function Landing() {
             >
               {t('marketing.hero.ctaSignup')}
             </Link>
+          </div>
+          <div className="mt-6 max-w-xs mx-auto">
+            <DemoLoginButton />
           </div>
         </div>
       </section>

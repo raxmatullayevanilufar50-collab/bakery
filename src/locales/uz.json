@@ -18,6 +18,15 @@
     "confirm": "Tasdiqlash",
     "cancel": "Bekor qilish"
   },
+  "demo": {
+    "cta": "Demo sifatida ko'rish",
+    "ctaHint": "Kodsiz, ro'yxatdan o'tmasdan — namuna ma'lumot bilan",
+    "entering": "Kirilmoqda...",
+    "bannerTitle": "Siz demo rejimidasiz",
+    "bannerSubtitle": "bu haqiqiy ma'lumot emas, namuna",
+    "exit": "Chiqish",
+    "readOnlyError": "Bu — demo. Haqiqiy ilovada bu funksiya to'liq ishlaydi."
+  },
   "roles": {
     "owner": "Egasi",
     "manager": "Boshqaruvchi",

@@ -37,7 +37,7 @@ function LoadingScreen() {
 
 function Root() {
   const { t } = useTranslation()
-  const { session, profile, profileChecked, loading, unlocked } = useAuth()
+  const { session, profile, profileChecked, loading, unlocked, isDemo } = useAuth()
 
   if (loading) return <LoadingScreen />
   if (!session) return <Landing />
@@ -56,8 +56,13 @@ function Root() {
       </div>
     )
   }
-  if (!profile.pin_hash) return <Navigate to="/pin-ornatish" replace />
-  if (!unlocked) return <PinUnlock />
+  // Demo rejimida PIN bosqichi butunlay o'tkazib yuboriladi — portfolio
+  // havolasi kodsiz ochilishi kerak. Demo hisobda himoyalanadigan hech
+  // narsa yo'q: ma'lumot sun'iy va baza darajasida faqat o'qish uchun.
+  if (!isDemo) {
+    if (!profile.pin_hash) return <Navigate to="/pin-ornatish" replace />
+    if (!unlocked) return <PinUnlock />
+  }
 
   const Dashboard = ROLE_DASHBOARDS[profile.role]
   if (!Dashboard) return <LoadingScreen />
