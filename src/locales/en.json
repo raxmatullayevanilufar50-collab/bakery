@@ -25,7 +25,8 @@
     "bannerTitle": "You are in demo mode",
     "bannerSubtitle": "this is sample data, not real records",
     "exit": "Exit",
-    "readOnlyError": "This is a demo. In the real app this feature works fully."
+    "readOnlyError": "This is a demo. In the real app this feature works fully.",
+    "viewAs": "View as"
   },
   "roles": {
     "owner": "Owner",

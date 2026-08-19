@@ -21,7 +21,7 @@ function startOfDay() {
 
 export default function CashierDashboard() {
   const { t, i18n } = useTranslation()
-  const { profile, company } = useAuth()
+  const { profile, company, isDemo } = useAuth()
   const toast = useToast()
   const [products, setProducts] = useState([])
   const [sales, setSales] = useState([])
@@ -42,7 +42,7 @@ export default function CashierDashboard() {
       supabase.from('products').select('id, name, unit, price, image_url, category, sell_by_weight, is_available').order('name'),
       supabase
         .from('sales')
-        .select('id, quantity, unit_price, total, created_at, products(name, unit)')
+        .select('id, quantity, unit_price, total, created_at, receipt_id, products(name, unit)')
         .eq('cashier_id', profile.id)
         .gte('created_at', startOfDay().toISOString())
         .order('created_at', { ascending: false }),
@@ -87,6 +87,45 @@ export default function CashierDashboard() {
     // qiladi va kunlik hisobotda tranzaksiyalarni to'g'ri sanashga imkon
     // beradi (20260808110000 migratsiyasi).
     const receiptId = crypto.randomUUID()
+    const cartTotal = cart.reduce((sum, item) => sum + item.product.price * item.quantity, 0)
+
+    // Demo rejimi: savdo bazaga yozilmaydi, lekin ekranda to'liq
+    // ishlagandek ko'rinadi — chek chiqadi, vitrina kamayadi, kunlik
+    // ro'yxatga tushadi. Sahifa yangilanganda hammasi boshlang'ich
+    // holatiga qaytadi.
+    if (isDemo) {
+      setInventory((current) => {
+        const next = { ...current }
+        for (const item of cart) next[item.product.id] = (next[item.product.id] || 0) - item.quantity
+        return next
+      })
+      setSales((current) => [
+        ...cart.map((item) => ({
+          id: `demo-${receiptId}-${item.product.id}`,
+          quantity: item.quantity,
+          unit_price: item.product.price,
+          total: item.product.price * item.quantity,
+          created_at: new Date().toISOString(),
+          receipt_id: receiptId,
+          products: { name: item.product.name, unit: item.product.unit },
+        })),
+        ...current,
+      ])
+      setReceipt({
+        items: cart,
+        total: cartTotal,
+        number: receiptId,
+        createdAt: new Date().toISOString(),
+        cashierName: profile.full_name,
+        companyName: company?.name,
+        companyAddress: company?.address,
+      })
+      setCart([])
+      toast.success(t('pos.saleSuccess'))
+      setSaving(false)
+      return
+    }
+
     const rows = cart.map((item) => ({ company_id: profile.company_id, cashier_id: profile.id, product_id: item.product.id, quantity: item.quantity, unit_price: item.product.price, total: item.product.price * item.quantity, receipt_id: receiptId }))
     const { error: insertError } = await supabase.from('sales').insert(rows)
     if (insertError) setError(translateError(t, insertError))
@@ -118,6 +157,30 @@ export default function CashierDashboard() {
     setCloseConfirmOpen(false)
     setError('')
     setClosing(true)
+
+    // Demo rejimi: hisobot ekrandagi bugungi savdolardan hisoblanadi.
+    if (isDemo) {
+      const byProduct = new Map()
+      for (const s of sales) {
+        const nom = s.products?.name || '—'
+        const oldRow = byProduct.get(nom) || { product_name: nom, unit: s.products?.unit, quantity: 0, total: 0 }
+        oldRow.quantity += Number(s.quantity)
+        oldRow.total += Number(s.total)
+        byProduct.set(nom, oldRow)
+      }
+      setClosing(false)
+      setZReport({
+        report_date: todayInTashkent(),
+        total_sales: sales.reduce((sum, s) => sum + Number(s.total), 0),
+        transaction_count: new Set(sales.map((s) => s.receipt_id || s.id)).size,
+        item_count: sales.reduce((sum, s) => sum + Number(s.quantity), 0),
+        product_breakdown: [...byProduct.values()].sort((a, b) => b.total - a.total),
+        closed_at: new Date().toISOString(),
+      })
+      toast.success(t('dailyClose.closed'))
+      return
+    }
+
     const { data, error: rpcError } = await supabase.rpc('close_day', { p_date: todayInTashkent() })
     setClosing(false)
     if (rpcError) {

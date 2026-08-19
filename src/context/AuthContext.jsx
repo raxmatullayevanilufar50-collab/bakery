@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, useCallback, useRef } from 'react'
+import { createContext, useContext, useEffect, useState, useCallback, useRef, useMemo } from 'react'
 import { supabase } from '../lib/supabase'
 import { getDeviceKey, getDeviceLabel } from '../lib/device'
 import { setLanguage } from '../lib/i18n'
@@ -23,6 +23,11 @@ export function AuthProvider({ children }) {
   // setUnlocked ichida joriy foydalanuvchini o'qish uchun — session
   // state'iga bog'lansa, PinUnlock eski closure'ni ushlab qolishi mumkin.
   const userIdRef = useRef(null)
+  // Demo rejimida mehmon rollarni almashtirib ko'ra oladi. Faqat React
+  // state — bazadagi rol o'zgarmaydi (o'zgartirib ham bo'lmaydi). RLS
+  // baribir haqiqiy rol bo'yicha ishlaydi, ya'ni bu almashtirish qaysi
+  // panel chizilishini tanlaydi, ruxsatlarni kengaytirmaydi.
+  const [demoRole, setDemoRole] = useState(null)
 
   const setUnlocked = useCallback((value) => {
     setUnlockedState(value)
@@ -227,15 +232,24 @@ export function AuthProvider({ children }) {
     [session]
   )
 
+  const isDemo = Boolean(company?.is_demo)
+
+  const effectiveProfile = useMemo(
+    () => (profile && isDemo && demoRole ? { ...profile, role: demoRole } : profile),
+    [profile, isDemo, demoRole]
+  )
+
   const value = {
     session,
-    profile,
+    profile: effectiveProfile,
     company,
     profileChecked,
     loading,
     unlocked,
     setUnlocked,
-    isDemo: Boolean(company?.is_demo),
+    isDemo,
+    demoRole: demoRole || profile?.role || null,
+    setDemoRole,
     signInDemo,
     signOut,
     refreshProfile,

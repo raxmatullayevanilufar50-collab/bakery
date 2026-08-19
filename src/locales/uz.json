@@ -25,7 +25,8 @@
     "bannerTitle": "Siz demo rejimidasiz",
     "bannerSubtitle": "bu haqiqiy ma'lumot emas, namuna",
     "exit": "Chiqish",
-    "readOnlyError": "Bu — demo. Haqiqiy ilovada bu funksiya to'liq ishlaydi."
+    "readOnlyError": "Bu — demo. Haqiqiy ilovada bu funksiya to'liq ishlaydi.",
+    "viewAs": "Ko'rish"
   },
   "roles": {
     "owner": "Egasi",
