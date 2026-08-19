@@ -27,7 +27,26 @@ export function AuthProvider({ children }) {
   // state — bazadagi rol o'zgarmaydi (o'zgartirib ham bo'lmaydi). RLS
   // baribir haqiqiy rol bo'yicha ishlaydi, ya'ni bu almashtirish qaysi
   // panel chizilishini tanlaydi, ruxsatlarni kengaytirmaydi.
-  const [demoRole, setDemoRole] = useState(null)
+  // sessionStorage: tanlangan rol sahifa yangilanganda saqlanadi, lekin
+  // tab yopilganda unutiladi. Rol — ko'rish sozlamasi, ma'lumot emas;
+  // demo MA'LUMOTI esa yangilanganda baribir asl holatiga qaytadi.
+  const [demoRole, setDemoRoleState] = useState(() => {
+    try {
+      return sessionStorage.getItem('bakery.demo-role') || null
+    } catch {
+      return null
+    }
+  })
+
+  const setDemoRole = useCallback((role) => {
+    setDemoRoleState(role)
+    try {
+      if (role) sessionStorage.setItem('bakery.demo-role', role)
+      else sessionStorage.removeItem('bakery.demo-role')
+    } catch {
+      // private rejim — rol shunchaki saqlanmaydi
+    }
+  }, [])
 
   const setUnlocked = useCallback((value) => {
     setUnlockedState(value)
@@ -198,9 +217,10 @@ export function AuthProvider({ children }) {
   const signOut = useCallback(async () => {
     clearPinSession()
     setDemoActive(false)
+    setDemoRole(null)
     await supabase.auth.signOut()
     setUnlockedState(false)
-  }, [])
+  }, [setDemoRole])
 
   // Kodsiz demo kirish. Oddiy parol bilan kirish — Supabase sessiyasi
   // haqiqiy, chunki barcha so'rovlar RLS orqali auth.uid() ga bog'langan.
