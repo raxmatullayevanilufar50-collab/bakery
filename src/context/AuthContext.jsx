@@ -4,6 +4,7 @@ import { getDeviceKey, getDeviceLabel } from '../lib/device'
 import { setLanguage } from '../lib/i18n'
 import { readPinSession, writePinSession, clearPinSession } from '../lib/pinSession'
 import { setDemoActive, DEMO_EMAIL, DEMO_PASSWORD } from '../lib/demoMode'
+import { resetDemoStore } from '../lib/demoStore'
 
 const AuthContext = createContext(null)
 
@@ -218,6 +219,7 @@ export function AuthProvider({ children }) {
     clearPinSession()
     setDemoActive(false)
     setDemoRole(null)
+    resetDemoStore()
     await supabase.auth.signOut()
     setUnlockedState(false)
   }, [setDemoRole])

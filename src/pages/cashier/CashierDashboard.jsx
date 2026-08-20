@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import DashboardShell from '../../components/DashboardShell'
 import { supabase } from '../../lib/supabase'
@@ -12,6 +12,7 @@ import ZReport from '../../components/reports/ZReport'
 import ConfirmDialog from '../../components/ui/ConfirmDialog'
 import { useToast } from '../../components/ui/Toast'
 import { todayInTashkent } from '../../lib/businessDay'
+import { applyDemoSale, useDemoStore } from '../../lib/demoStore'
 
 function startOfDay() {
   const d = new Date()
@@ -22,13 +23,14 @@ function startOfDay() {
 export default function CashierDashboard() {
   const { t, i18n } = useTranslation()
   const { profile, company, isDemo } = useAuth()
+  const demo = useDemoStore()
   const toast = useToast()
   const [products, setProducts] = useState([])
-  const [sales, setSales] = useState([])
+  const [baseSales, setSales] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [saving, setSaving] = useState(false)
-  const [inventory, setInventory] = useState({})
+  const [baseInventory, setInventory] = useState({})
   const [cart, setCart] = useState([])
   const [receipt, setReceipt] = useState(null)
   const [preOrderOpen, setPreOrderOpen] = useState(false)
@@ -57,6 +59,23 @@ export default function CashierDashboard() {
   useEffect(() => {
     load()
   }, [load])
+
+  // Demo rejimidagi o'zgarishlar bazadan kelgan ma'lumot ustiga
+  // qo'shiladi. Nonvoy panelida pishirilgan mahsulot shu yerda
+  // vitrinada ko'payib turadi — zanjir ekranlar orasida uzilmaydi.
+  const inventory = useMemo(() => {
+    if (!isDemo) return baseInventory
+    const merged = { ...baseInventory }
+    for (const [productId, delta] of Object.entries(demo.displayDelta)) {
+      merged[productId] = (merged[productId] || 0) + delta
+    }
+    return merged
+  }, [isDemo, baseInventory, demo.displayDelta])
+
+  const sales = useMemo(
+    () => (isDemo ? [...demo.sales, ...baseSales] : baseSales),
+    [isDemo, demo.sales, baseSales]
+  )
 
   useEffect(() => {
     const channel = supabase.channel('cashier-display-inventory')
@@ -94,13 +113,9 @@ export default function CashierDashboard() {
     // ro'yxatga tushadi. Sahifa yangilanganda hammasi boshlang'ich
     // holatiga qaytadi.
     if (isDemo) {
-      setInventory((current) => {
-        const next = { ...current }
-        for (const item of cart) next[item.product.id] = (next[item.product.id] || 0) - item.quantity
-        return next
-      })
-      setSales((current) => [
-        ...cart.map((item) => ({
+      applyDemoSale({
+        displayDelta: Object.fromEntries(cart.map((item) => [item.product.id, -item.quantity])),
+        sales: cart.map((item) => ({
           id: `demo-${receiptId}-${item.product.id}`,
           quantity: item.quantity,
           unit_price: item.product.price,
@@ -109,8 +124,7 @@ export default function CashierDashboard() {
           receipt_id: receiptId,
           products: { name: item.product.name, unit: item.product.unit },
         })),
-        ...current,
-      ])
+      })
       setReceipt({
         items: cart,
         total: cartTotal,

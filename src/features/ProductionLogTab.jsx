@@ -6,6 +6,7 @@ import { parseProductionUtterance } from '../lib/voiceParse'
 import { translateError } from '../lib/errors'
 import { localeTag } from '../lib/i18n'
 import VoiceRecorder from '../components/VoiceRecorder'
+import { applyDemoProduction, useDemoStore } from '../lib/demoStore'
 
 const EMPTY_ROW = { productId: '', quantity: '' }
 
@@ -28,8 +29,12 @@ function looksMultiItem(transcript) {
 // bo'yicha xomashyoni avtomatik kamaytiradi.
 export default function ProductionLogTab() {
   const { t, i18n } = useTranslation()
-  const { profile } = useAuth()
+  const { profile, isDemo } = useAuth()
+  const demo = useDemoStore()
   const [products, setProducts] = useState([])
+  // Demo rejimida pishirish zanjirini mijoz tomonda hisoblash uchun
+  // retseptlar kerak (serverdagi trigger nima qilsa, o'shani takrorlaymiz).
+  const [recipes, setRecipes] = useState([])
   const [todayLogs, setTodayLogs] = useState([])
   const [loading, setLoading] = useState(true)
   const [draftItems, setDraftItems] = useState(null)
@@ -40,7 +45,7 @@ export default function ProductionLogTab() {
 
   const load = useCallback(async () => {
     setLoading(true)
-    const [{ data: productRows }, { data: logRows }] = await Promise.all([
+    const [{ data: productRows }, { data: logRows }, { data: recipeRows }] = await Promise.all([
       supabase.from('products').select('id, name, unit').order('name'),
       supabase
         .from('production_logs')
@@ -48,9 +53,11 @@ export default function ProductionLogTab() {
         .eq('profile_id', profile.id)
         .gte('created_at', startOfDay().toISOString())
         .order('created_at', { ascending: false }),
+      supabase.from('product_ingredients').select('product_id, inventory_item_id, quantity_per_unit'),
     ])
     setProducts(productRows || [])
     setTodayLogs(logRows || [])
+    setRecipes(recipeRows || [])
     setLoading(false)
   }, [profile.id])
 
@@ -118,6 +125,38 @@ export default function ProductionLogTab() {
     const invalid = rows.some((r) => !r.productId || !r.quantity || r.quantity <= 0)
     if (rows.length === 0 || invalid) {
       setError(t('productionLog.invalidDraft'))
+      return
+    }
+
+    // Demo rejimi: bazaga yozilmaydi, lekin serverdagi trigger nima
+    // qilsa o'shani mijoz tomonda takrorlaymiz — xomashyo retsept
+    // bo'yicha kamayadi, tayyor mahsulot vitrinaga tushadi. Natija
+    // Ombor va Kassa ekranlarida ham ko'rinadi.
+    if (isDemo) {
+      const inventoryDelta = {}
+      const displayDelta = {}
+      for (const r of rows) {
+        displayDelta[r.productId] = (displayDelta[r.productId] || 0) + r.quantity
+        for (const ing of recipes.filter((x) => x.product_id === r.productId)) {
+          inventoryDelta[ing.inventory_item_id] =
+            (inventoryDelta[ing.inventory_item_id] || 0) - Number(ing.quantity_per_unit) * r.quantity
+        }
+      }
+      applyDemoProduction({
+        logs: rows.map((r) => {
+          const product = products.find((p) => p.id === r.productId)
+          return {
+            id: 'demo-' + crypto.randomUUID(),
+            quantity: r.quantity,
+            created_at: new Date().toISOString(),
+            products: { name: product?.name, unit: product?.unit },
+          }
+        }),
+        inventoryDelta,
+        displayDelta,
+      })
+      setDraftItems(null)
+      setAiTranscript('')
       return
     }
 
@@ -210,10 +249,10 @@ export default function ProductionLogTab() {
       <div className="flex flex-col gap-2">
         <h2 className="font-extrabold text-brown-dark">{t('productionLog.todayEntries')}</h2>
         {loading && <p className="text-ink-muted font-semibold">{t('common.loading')}</p>}
-        {!loading && todayLogs.length === 0 && (
+        {!loading && todayLogs.length === 0 && demo.productionLogs.length === 0 && (
           <p className="text-ink-muted font-semibold">{t('productionLog.noEntries')}</p>
         )}
-        {todayLogs.map((log) => (
+        {[...demo.productionLogs, ...todayLogs].map((log) => (
           <div key={log.id} className="card p-3 flex items-center justify-between text-sm">
             <span className="text-ink font-semibold">
               {log.products?.name} × {log.quantity} {log.products?.unit}

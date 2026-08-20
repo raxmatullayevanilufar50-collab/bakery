@@ -3,11 +3,13 @@ import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { translateError } from '../lib/errors'
+import { useDemoStore } from '../lib/demoStore'
 
 export default function InventoryTab() {
   const { t } = useTranslation()
   const { profile } = useAuth()
-  const [items, setItems] = useState([])
+  const demo = useDemoStore()
+  const [rawItems, setItems] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [form, setForm] = useState({ name: '', quantity: '', unit: 'kg', threshold: '' })
@@ -145,6 +147,18 @@ export default function InventoryTab() {
   async function removeItem(id) {
     await supabase.from('inventory_items').delete().eq('id', id)
   }
+
+  // Demo rejimida pishirish qaydi bazaga yozilmaydi, shuning uchun
+  // sarflangan xomashyo shu yerda mijoz tomonda ayiriladi — mehmon
+  // "10 dona non pishirdim" degach, Omborga qaytsa un kamayganini
+  // ko'radi.
+  const items = useMemo(
+    () => rawItems.map((item) => {
+      const delta = demo.inventoryDelta[item.id]
+      return delta ? { ...item, quantity: Number(item.quantity) + delta } : item
+    }),
+    [rawItems, demo.inventoryDelta]
+  )
 
   const lowItems = useMemo(
     () => items.filter((item) => Number(item.quantity) <= Number(item.low_stock_threshold)),
